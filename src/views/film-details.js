@@ -1,33 +1,32 @@
 import { createElement } from '../utils/render';
-import { getActiveClassButton } from './card';
+import { getActiveClassButton } from '../utils/helpers';
+import { EmojiMap } from '../const';
 
-
-const EmojiMap = {
-  smile: './images/emoji/smile.png',
-  sleeping: './images/emoji/sleeping.png',
-  puke: './images/emoji/puke.png',
-  angry: './images/emoji/angry.png',
-};
-
-const getGenreListMarkup = (genre) => `<td class="film-details__cell>
+const getGenreListTemplate = (genre) => (
+  `<td class="film-details__cell>
     ${ genre.map((ganre) => `<span class="film-details__genre">${ganre}</span>`).join(' ') }
-  </td>`;
+  </td>`
+);
 
-const commentItemMarkup = ({ author, comment, date, emotion } ) => `<li class="film-details__comment">
-                                                                          <span class="film-details__comment-emoji">
-                                                                            <img src="${EmojiMap[emotion]}" width="55" height="55" alt="emoji-smile">
-                                                                          </span>
-                                                                          <div>
-                                                                            <p class="film-details__comment-text">${ comment }</p>
-                                                                            <p class="film-details__comment-info">
-                                                                              <span class="film-details__comment-author">${ author }</span>
-                                                                              <span class="film-details__comment-day">${ date }</span>
-                                                                              <button class="film-details__comment-delete">Delete</button>
-                                                                            </p>
-                                                                          </div>
-                                                                          </li>`;
+const getCommentListItem = ({ author, comment, date, emotion }) => (
+  `<li class="film-details__comment">
+    <span class="film-details__comment-emoji">
+      <img src="${EmojiMap[emotion]}" width="55" height="55" alt="emoji-smile">
+    </span>
+    <div>
+      <p class="film-details__comment-text">${ comment }</p>
+      <p class="film-details__comment-info">
+        <span class="film-details__comment-author">${ author }</span>
+        <span class="film-details__comment-day">${ date }</span>
+        <button class="film-details__comment-delete">Delete</button>
+      </p>
+    </div>
+  </li>`
+);
 
-const commentsListMarkup = (comments) => `<ul class="film-details__comments-list">${ comments.map(commentItemMarkup).join('') }</ul>`;
+const getCommentsListTemplate = (comments) => (
+  `<ul class="film-details__comments-list">${ comments.map(getCommentListItem).join('') }</ul>`
+);
 
 const FILM_DETAILS_POPUP_TEMPLATE = ({ comments, info, details }) => {
   const {
@@ -43,8 +42,12 @@ const FILM_DETAILS_POPUP_TEMPLATE = ({ comments, info, details }) => {
     runtime,
     release: { date, releaseCountry },
   } = info;
-  const commentsList = commentsListMarkup(comments);
+
   const { watchlist, alreadyWatched, favorite } = details;
+
+  const commentsList = getCommentsListTemplate(comments);
+  const genresListTemplate = getGenreListTemplate(genre);
+
 
   const isActiveWatchListButton = getActiveClassButton(watchlist);
   const isAlreadyWatchedButton = getActiveClassButton(alreadyWatched);
@@ -79,31 +82,31 @@ const FILM_DETAILS_POPUP_TEMPLATE = ({ comments, info, details }) => {
           <table class="film-details__table">
             <tr class="film-details__row">
               <td class="film-details__term">Director</td>
-              <td class="film-details__cell">${ director }</td>
+              <td class="film-details__cell">${director}</td>
             </tr>
             <tr class="film-details__row">
               <td class="film-details__term">Writers</td>
-              <td class="film-details__cell">${ writers.join(', ') }</td>
+              <td class="film-details__cell">${writers.join(', ')}</td>
             </tr>
             <tr class="film-details__row">
               <td class="film-details__term">Actors</td>
-              <td class="film-details__cell">${ actors.join(', ') }</td>
+              <td class="film-details__cell">${actors.join(', ')}</td>
             </tr>
             <tr class="film-details__row">
               <td class="film-details__term">Release Date</td>
-              <td class="film-details__cell">${ date }</td>
+              <td class="film-details__cell">${date}</td>
             </tr>
             <tr class="film-details__row">
               <td class="film-details__term">Runtime</td>
-              <td class="film-details__cell">${ runtime }</td>
+              <td class="film-details__cell">${runtime}</td>
             </tr>
             <tr class="film-details__row">
               <td class="film-details__term">Country</td>
-              <td class="film-details__cell">${ releaseCountry }</td>
+              <td class="film-details__cell">${releaseCountry}</td>
             </tr>
             <tr class="film-details__row">
               <td class="film-details__term">Genres</td>
-              ${ getGenreListMarkup(genre) }
+              ${genresListTemplate}
             </tr>
           </table>
   
@@ -122,12 +125,10 @@ const FILM_DETAILS_POPUP_TEMPLATE = ({ comments, info, details }) => {
   
     <div class="film-details__bottom-container">
       <section class="film-details__comments-wrap">
-        <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${ comments.length }</span></h3>
-  
-       
-        ${ commentsList }
-       
-  
+        <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${comments.length}</span></h3>
+    
+        ${commentsList}
+      
         <div class="film-details__new-comment">
           <div class="film-details__add-emoji-label">
             <img src="images/emoji/smile.png" width="55" height="55" alt="emoji-smile">
@@ -175,7 +176,7 @@ const popupAddListeners = (popupElement) => {
   closeButton.addEventListener('click', () => closePopupClickHandler(popupElement));
 };
 
-export const filmDetailsPopup = (data) => {
+export const getFilmDetailsPopupTemplate = (data) => {
   const popup = createElement(FILM_DETAILS_POPUP_TEMPLATE(data));
 
   popupAddListeners(popup);

@@ -13,3 +13,10 @@ export const ProfileRaiting = freeze({
   MORE_BUFF: 'movie buff',
   NOTHING: '',
 });
+
+export const EmojiMap = freeze({
+  smile: './images/emoji/smile.png',
+  sleeping: './images/emoji/sleeping.png',
+  puke: './images/emoji/puke.png',
+  angry: './images/emoji/angry.png',
+});

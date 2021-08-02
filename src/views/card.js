@@ -1,11 +1,8 @@
+import { getActiveClassButton } from '../utils/helpers';
 import { createElement } from '../utils/render';
 
-export const getActiveClassButton = (isActive) => isActive ? 'film-card__controls-item--active' : '';
 
-const noop = () => {};
-
-
-const CARD_TEPLATE = ({ comments, details, info }) => {
+const getCardTemplate = ({ comments, details, info }) => {
   const { poster, title, description, genre, totalRating, release: { date }, runtime} = info;
   const { watchlist, alreadyWatched, favorite } = details;
 
@@ -13,9 +10,10 @@ const CARD_TEPLATE = ({ comments, details, info }) => {
   const isAlreadyWatchedButton = getActiveClassButton(alreadyWatched);
   const isActiveFavoriteButton = getActiveClassButton(favorite);
 
-  const [,, year] = date.split(' ');
+  const [,,year] = date.split(' ');
 
-  return `<article class="film-card">
+  return (
+    `<article class="film-card">
       <h3 class="film-card__title">${title}</h3>
         <p class="film-card__rating">${totalRating}</p>
         <p class="film-card__info">
@@ -31,7 +29,8 @@ const CARD_TEPLATE = ({ comments, details, info }) => {
           <button class="film-card__controls-item film-card__controls-item--mark-as-watched ${isAlreadyWatchedButton}" type="button">Mark as watched</button>
           <button class="film-card__controls-item film-card__controls-item--favorite ${isActiveFavoriteButton}" type="button">Mark as favorite</button>
         </div>
-    </article>`;
+    </article>`
+  );
 };
 
 const cardAddListeners = (cardElement, data, handler) => {
@@ -42,8 +41,8 @@ const cardAddListeners = (cardElement, data, handler) => {
 };
 
 
-export const cardTemplate = (data, cb = noop) => {
-  const card = createElement(CARD_TEPLATE(data));
+export const getFilmCardTemplate = (data, cb) => {
+  const card = createElement(getCardTemplate(data));
 
   cardAddListeners(card, data, cb);
 
