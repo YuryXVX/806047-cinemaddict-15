@@ -19,7 +19,7 @@ const emotions = ['smile', 'sleeping', 'puke', 'angry'];
 
 const getCommentsIdList = () => Array(getRandomIntInclusive(1, 15)).fill(null).map((_, i) => i + 1);
 
-export const comment = (_, i) => ({
+const getComment = (_, i) => ({
   id: i + 1,
   author: directors[getRandomIntInclusive(0, directors.length - 1)],
   comment: filmDescriptions[getRandomIntInclusive(0, filmDescriptions.length - 1)],
@@ -28,7 +28,7 @@ export const comment = (_, i) => ({
 });
 
 
-const filmMock = () => ({
+const getFilm = () => ({
   comments: getCommentsIdList(),
   info: {
     title: filmTitles[getRandomIntInclusive(0, filmTitles.length - 1)],
@@ -55,4 +55,4 @@ const filmMock = () => ({
   },
 });
 
-export { filmMock };
+export { getFilm, getComment };

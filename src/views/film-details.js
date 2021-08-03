@@ -171,7 +171,7 @@ const closePopupClickHandler = (el) => {
   el.remove();
 };
 
-const popupAddListeners = (popupElement) => {
+const addListeners = (popupElement) => {
   const closeButton = popupElement.querySelector('.film-details__close-btn');
   closeButton.addEventListener('click', () => closePopupClickHandler(popupElement));
 };
@@ -179,6 +179,6 @@ const popupAddListeners = (popupElement) => {
 export const getFilmDetailsPopupTemplate = (data) => {
   const popup = createElement(FILM_DETAILS_POPUP_TEMPLATE(data));
 
-  popupAddListeners(popup);
+  addListeners(popup);
   return popup;
 };

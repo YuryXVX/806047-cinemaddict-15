@@ -33,7 +33,7 @@ const getCardTemplate = ({ comments, details, info }) => {
   );
 };
 
-const cardAddListeners = (cardElement, data, handler) => {
+const addListeners = (cardElement, data, handler) => {
   cardElement.addEventListener('click', (evt) => {
     evt.preventDefault();
     handler(data);
@@ -44,7 +44,7 @@ const cardAddListeners = (cardElement, data, handler) => {
 export const getFilmCardTemplate = (data, cb) => {
   const card = createElement(getCardTemplate(data));
 
-  cardAddListeners(card, data, cb);
+  addListeners(card, data, cb);
 
   return card;
 };

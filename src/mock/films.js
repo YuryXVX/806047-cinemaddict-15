@@ -1,6 +1,6 @@
-import { filmMock, comment } from './film';
+import { getComment, getFilm } from './film';
 
-const getFilmsMockData = (count) => Array(count).fill(null).map(filmMock);
-const getCommentMockData = (count = 15) => Array(count).fill(null).map(comment);
+const getFilmsMockData = (count) => Array(count).fill(null).map(getFilm);
+const getCommentMockData = (count = 15) => Array(count).fill(null).map(getComment);
 
 export { getFilmsMockData, getCommentMockData };
