@@ -28,7 +28,7 @@ const getCommentsListTemplate = (comments) => (
   `<ul class="film-details__comments-list">${ comments.map(getCommentListItem).join('') }</ul>`
 );
 
-const FILM_DETAILS_POPUP_TEMPLATE = ({ comments, info, details }) => {
+const getFilmDetailsTemplate = ({ comments, info, details }) => {
   const {
     poster,
     title,
@@ -177,7 +177,7 @@ const addListeners = (popupElement) => {
 };
 
 export const getFilmDetailsPopupTemplate = (data) => {
-  const popup = createElement(FILM_DETAILS_POPUP_TEMPLATE(data));
+  const popup = createElement(getFilmDetailsTemplate(data));
 
   addListeners(popup);
   return popup;
