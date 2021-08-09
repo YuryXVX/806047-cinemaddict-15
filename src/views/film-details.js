@@ -1,6 +1,6 @@
-import { createElement } from '../utils/render';
 import { getActiveClassButton } from '../utils/helpers';
 import { EmojiMap } from '../const';
+import Component from './components';
 
 const getGenreListTemplate = (genre) => (
   `<td class="film-details__cell>
@@ -46,6 +46,7 @@ const getFilmDetailsTemplate = ({ comments, info, details }) => {
   const { watchlist, alreadyWatched, favorite } = details;
 
   const commentsList = getCommentsListTemplate(comments);
+
   const genresListTemplate = getGenreListTemplate(genre);
 
 
@@ -166,19 +167,27 @@ const getFilmDetailsTemplate = ({ comments, info, details }) => {
   </section>`;
 };
 
-const closePopupClickHandler = (el) => {
-  document.body.style.overflow = 'auto';
-  el.remove();
-};
 
-const addListeners = (popupElement) => {
-  const closeButton = popupElement.querySelector('.film-details__close-btn');
-  closeButton.addEventListener('click', () => closePopupClickHandler(popupElement));
-};
+export default class FilmDetails extends Component {
+  constructor(data, handler = () => {}) {
+    super();
+    this._data = data;
+    this._handler = handler;
+  }
 
-export const getFilmDetailsPopupTemplate = (data) => {
-  const popup = createElement(getFilmDetailsTemplate(data));
+  getTemplate() {
+    return getFilmDetailsTemplate(this._data);
+  }
 
-  addListeners(popup);
-  return popup;
-};
+  setCloseButtonClickHandler() {
+    this.getElement()
+      .querySelector('.film-details__close-btn')
+      .addEventListener('click', this._handler);
+  }
+
+  _removeListener() {
+    this.getElement()
+      .querySelector('.film-details__close-btn')
+      .removeEventListener('click', this._handler);
+  }
+}

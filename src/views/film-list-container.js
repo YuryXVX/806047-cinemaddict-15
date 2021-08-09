@@ -1,13 +1,18 @@
-import { createElement } from '../utils/render';
+import Component from './components';
 
 const getFilmListContainerTemplate = (classList) => (
-  `<section class="${classList}">
-    <h2 class="films-list__title visually-hidden">All movies. Upcoming</h2>
-    </section>
-  `
+  `<div class="${classList}"></div>`
 );
 
-export const getFilmListContainerTepmlate = (isExtra = false) => {
-  const classes = isExtra ? 'films-list__container films-list--extra' : 'films-list__container';
-  return createElement(getFilmListContainerTemplate(classes));
-};
+export default class FilmListSection extends Component {
+  constructor(isExtra = false) {
+    super();
+
+    this._isExtra = isExtra;
+  }
+
+  getTemplate() {
+    const classes = this._isExtra ? 'films-list__container films-list--extra' : 'films-list__container';
+    return getFilmListContainerTemplate(classes);
+  }
+}

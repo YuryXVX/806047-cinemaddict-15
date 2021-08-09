@@ -1,5 +1,9 @@
-import { createElement } from '../utils/render';
+import Component from './components';
 
 const sectionTemplate = '<section class="films"></section>';
 
-export const getFilmsSectionTemplate = () => createElement(sectionTemplate);
+export default class FilmSection extends Component {
+  getTemplate() {
+    return sectionTemplate;
+  }
+}

@@ -1,4 +1,4 @@
-import { createElement } from '../utils/render';
+import Component from './components';
 
 const getFooterStatisticTemplate = (filmCount) => (
   `<section class="footer__statistics">
@@ -6,5 +6,13 @@ const getFooterStatisticTemplate = (filmCount) => (
   </section>`
 );
 
+export default class Footer  extends Component {
+  constructor(filmCount) {
+    super();
+    this._filmCount = filmCount;
+  }
 
-export const getFooterTemplate = (filmCount) => createElement(getFooterStatisticTemplate(filmCount));
+  getTemplate() {
+    return getFooterStatisticTemplate(this._filmCount);
+  }
+}

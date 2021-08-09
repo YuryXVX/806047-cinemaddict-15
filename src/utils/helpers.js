@@ -32,3 +32,8 @@ export const getRandomFlag = () => Math.random() > .5;
 export const getRandomDate = (start, end) =>new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
 
 export const getActiveClassButton = (isActive) => isActive ? 'film-card__controls-item--active' : '';
+
+export const toggleOverflowHiddenClass = (element, className) => {
+  const classes = element.classList;
+  return classes.toggle(className);
+};

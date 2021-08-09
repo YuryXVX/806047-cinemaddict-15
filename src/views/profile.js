@@ -1,4 +1,4 @@
-import { createElement } from '../utils/render';
+import Component from './components';
 
 const getProfileSectionTemplate = (raiting) => (
   `<section class="header__profile profile">
@@ -7,4 +7,13 @@ const getProfileSectionTemplate = (raiting) => (
   </section>`
 );
 
-export const getProfileTemplate = (raiting) => createElement(getProfileSectionTemplate(raiting));
+export default class Profile extends Component {
+  constructor(raiting) {
+    super();
+    this._raiting = raiting;
+  }
+
+  getTemplate() {
+    return getProfileSectionTemplate(this._raiting);
+  }
+}

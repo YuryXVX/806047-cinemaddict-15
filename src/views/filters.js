@@ -1,5 +1,5 @@
 import { FilterType } from '../const';
-import { createElement } from '../utils/render';
+import Component from './components';
 
 const getFilterButtonTemplate = (filter) => {
   const { name, count, active } = filter;
@@ -21,4 +21,13 @@ const getFilterButtonListTemplate = (filters) => (
   </nav>`
 );
 
-export const getFiltersTemplate = (filters) => createElement(getFilterButtonListTemplate(filters));
+export default class Filters extends Component {
+  constructor(filters) {
+    super();
+    this._filters = filters;
+  }
+
+  getTemplate() {
+    return getFilterButtonListTemplate(this._filters);
+  }
+}

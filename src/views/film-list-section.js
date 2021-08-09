@@ -1,4 +1,4 @@
-import { createElement } from '../utils/render';
+import Component from './components';
 
 const getFilmSectionTemplate = (classList) => (
   `<section class="${classList}">
@@ -7,7 +7,15 @@ const getFilmSectionTemplate = (classList) => (
   `
 );
 
-export const getFilmListSectionTemplate = (isExtra = false) => {
-  const classes = isExtra ? 'films-list films-list--extra' : 'films-list';
-  return createElement(getFilmSectionTemplate(classes));
-};
+export default class FilListContainer extends Component {
+  constructor(isExtra = false) {
+    super();
+
+    this._isExtra = isExtra;
+  }
+
+  getTemplate() {
+    const classes = this._isExtra ? 'films-list films-list--extra' : 'films-list';
+    return getFilmSectionTemplate(classes);
+  }
+}
