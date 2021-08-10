@@ -1,6 +1,8 @@
 import { toggleOverflowHiddenClass } from '../utils/helpers';
 import { render, RenderPosition } from '../utils/render';
-import FilmCard from '../views/card';
+
+// views
+import FilmCard from '../views/film-card';
 import FilmDetails from '../views/film-details';
 
 export default class Film {
@@ -61,3 +63,14 @@ export default class Film {
     this._filmCardView.setCommentsLinkClickHandler(this._onRenderPopup);
   }
 }
+
+export const renderFilmCardViews = (container, films, comments) => films.map((film) => {
+  const patchDataForPopup = {
+    ...film,
+    comments: comments.filter((comment) => film.comments.includes(comment.id)),
+  };
+
+  const filmController = new Film(container, patchDataForPopup);
+  filmController.render();
+  return filmController;
+});

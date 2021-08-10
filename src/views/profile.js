@@ -1,6 +1,6 @@
-import Component from './components';
+import Component from './component';
 
-const getProfileSectionTemplate = (raiting) => (
+const createProfileTemplate = (raiting) => (
   `<section class="header__profile profile">
     <p class="profile__rating">${raiting}</p>
     <img class="profile__avatar" src="images/bitmap@2x.png" alt="Avatar" width="35" height="35">
@@ -14,6 +14,6 @@ export default class Profile extends Component {
   }
 
   getTemplate() {
-    return getProfileSectionTemplate(this._raiting);
+    return createProfileTemplate(this._raiting);
   }
 }

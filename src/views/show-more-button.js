@@ -1,4 +1,4 @@
-import Component from './components';
+import Component from './component';
 
 const showMoreButtonTemplate = '<button class="films-list__show-more">Show more</button>';
 

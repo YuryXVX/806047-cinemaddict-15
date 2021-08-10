@@ -1,8 +1,8 @@
 import { getActiveClassButton } from '../utils/helpers';
-import Component from './components';
+import Component from './component';
 
 
-const getCardTemplate = ({ comments, details, info }) => {
+const createFilmCardTemplate = ({ comments, details, info }) => {
   const { poster, title, description, genre, totalRating, release: { date }, runtime} = info;
   const { watchlist, alreadyWatched, favorite } = details;
 
@@ -40,7 +40,7 @@ export default class FilmCard extends Component {
   }
 
   getTemplate() {
-    return getCardTemplate(this._data);
+    return createFilmCardTemplate(this._data);
   }
 
   setPosterClickHandler(handler) {

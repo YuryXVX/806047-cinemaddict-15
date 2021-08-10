@@ -23,7 +23,7 @@ export const render = (container, component, place) => {
   }
 };
 
-export const remove = (component) => {
+export const removeElement = (component) => {
   component.getElement().remove();
   component.removeElement();
 };

@@ -1,4 +1,4 @@
-import Component from './components';
+import Component from './component';
 
 const sortTemplate = (
   `<ul class="sort">
