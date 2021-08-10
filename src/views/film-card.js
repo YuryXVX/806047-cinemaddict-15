@@ -1,8 +1,8 @@
 import { getActiveClassButton } from '../utils/helpers';
-import { createElement } from '../utils/render';
+import Component from './component';
 
 
-const getCardTemplate = ({ comments, details, info }) => {
+const createFilmCardTemplate = ({ comments, details, info }) => {
   const { poster, title, description, genre, totalRating, release: { date }, runtime} = info;
   const { watchlist, alreadyWatched, favorite } = details;
 
@@ -33,18 +33,36 @@ const getCardTemplate = ({ comments, details, info }) => {
   );
 };
 
-const addListeners = (cardElement, data, handler) => {
-  cardElement.addEventListener('click', (evt) => {
-    evt.preventDefault();
-    handler(data);
-  });
-};
+export default class FilmCard extends Component {
+  constructor(data) {
+    super();
+    this._data = data;
+  }
+
+  getTemplate() {
+    return createFilmCardTemplate(this._data);
+  }
+
+  setPosterClickHandler(handler) {
+    this.getElement()
+      .querySelector('.film-card__poster')
+      .addEventListener('click', handler);
+  }
+
+  setTitleClickHandler(handler) {
+    this.getElement()
+      .querySelector('.film-card__title')
+      .addEventListener('click', handler);
+  }
+
+  setCommentsLinkClickHandler(handler) {
+    this.getElement()
+      .querySelector('.film-card__comments')
+      .addEventListener('click', (evt) => {
+        evt.preventDefault();
+        handler();
+      });
+  }
+}
 
 
-export const getFilmCardTemplate = (data, cb) => {
-  const card = createElement(getCardTemplate(data));
-
-  addListeners(card, data, cb);
-
-  return card;
-};

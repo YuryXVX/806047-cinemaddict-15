@@ -1,14 +1,14 @@
-import { createElement } from '../utils/render';
 import { getActiveClassButton } from '../utils/helpers';
 import { EmojiMap } from '../const';
+import Component from './component';
 
-const getGenreListTemplate = (genre) => (
+const createGenreListTemplate = (genre) => (
   `<td class="film-details__cell>
     ${ genre.map((ganre) => `<span class="film-details__genre">${ganre}</span>`).join(' ') }
   </td>`
 );
 
-const getCommentListItem = ({ author, comment, date, emotion }) => (
+const cretateCommentTemplate = ({ author, comment, date, emotion }) => (
   `<li class="film-details__comment">
     <span class="film-details__comment-emoji">
       <img src="${EmojiMap[emotion]}" width="55" height="55" alt="emoji-smile">
@@ -24,11 +24,11 @@ const getCommentListItem = ({ author, comment, date, emotion }) => (
   </li>`
 );
 
-const getCommentsListTemplate = (comments) => (
-  `<ul class="film-details__comments-list">${ comments.map(getCommentListItem).join('') }</ul>`
+const createCommentsListTemplate = (comments) => (
+  `<ul class="film-details__comments-list">${ comments.map(cretateCommentTemplate).join('') }</ul>`
 );
 
-const getFilmDetailsTemplate = ({ comments, info, details }) => {
+const createFilmDetailsTemplate = ({ comments, info, details }) => {
   const {
     poster,
     title,
@@ -45,9 +45,8 @@ const getFilmDetailsTemplate = ({ comments, info, details }) => {
 
   const { watchlist, alreadyWatched, favorite } = details;
 
-  const commentsList = getCommentsListTemplate(comments);
-  const genresListTemplate = getGenreListTemplate(genre);
-
+  const commentsList = createCommentsListTemplate(comments);
+  const genresListTemplate = createGenreListTemplate(genre);
 
   const isActiveWatchListButton = getActiveClassButton(watchlist);
   const isAlreadyWatchedButton = getActiveClassButton(alreadyWatched);
@@ -166,19 +165,27 @@ const getFilmDetailsTemplate = ({ comments, info, details }) => {
   </section>`;
 };
 
-const closePopupClickHandler = (el) => {
-  document.body.style.overflow = 'auto';
-  el.remove();
-};
 
-const addListeners = (popupElement) => {
-  const closeButton = popupElement.querySelector('.film-details__close-btn');
-  closeButton.addEventListener('click', () => closePopupClickHandler(popupElement));
-};
+export default class FilmDetails extends Component {
+  constructor(data, handler = () => {}) {
+    super();
+    this._data = data;
+    this._handler = handler;
+  }
 
-export const getFilmDetailsPopupTemplate = (data) => {
-  const popup = createElement(getFilmDetailsTemplate(data));
+  getTemplate() {
+    return createFilmDetailsTemplate(this._data);
+  }
 
-  addListeners(popup);
-  return popup;
-};
+  setCloseButtonClickHandler() {
+    this.getElement()
+      .querySelector('.film-details__close-btn')
+      .addEventListener('click', this._handler);
+  }
+
+  _removeListener() {
+    this.getElement()
+      .querySelector('.film-details__close-btn')
+      .removeEventListener('click', this._handler);
+  }
+}

@@ -1,4 +1,4 @@
-import { createElement } from '../utils/render';
+import Component from './component';
 
 const sortTemplate = (
   `<ul class="sort">
@@ -8,4 +8,9 @@ const sortTemplate = (
   </ul>`
 );
 
-export const getSortTemplate = () => createElement(sortTemplate);
+export default class Sort extends Component {
+  getTemplate() {
+    return sortTemplate;
+  }
+}
+

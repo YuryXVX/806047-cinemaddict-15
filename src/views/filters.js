@@ -1,7 +1,7 @@
 import { FilterType } from '../const';
-import { createElement } from '../utils/render';
+import Component from './component';
 
-const getFilterButtonTemplate = (filter) => {
+const createFilterButtonTemplate = (filter) => {
   const { name, count, active } = filter;
 
   const countSpan = name === FilterType.ALL ? '' : `<span class="main-navigation__item-count">${count}</span>`;
@@ -12,13 +12,22 @@ const getFilterButtonTemplate = (filter) => {
   );
 };
 
-const getFilterButtonListTemplate = (filters) => (
+const createFilterButtonListTemplate = (filters) => (
   `<nav class="main-navigation">
     <div class="main-navigation__items">
-      ${ filters.map(getFilterButtonTemplate).join(' ') }
+      ${ filters.map(createFilterButtonTemplate).join(' ') }
     </div>
     <a href="#stats" class="main-navigation__additional">Stats</a>
   </nav>`
 );
 
-export const getFiltersTemplate = (filters) => createElement(getFilterButtonListTemplate(filters));
+export default class Filters extends Component {
+  constructor(filters) {
+    super();
+    this._filters = filters;
+  }
+
+  getTemplate() {
+    return createFilterButtonListTemplate(this._filters);
+  }
+}

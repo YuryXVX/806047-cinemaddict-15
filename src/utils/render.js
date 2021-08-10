@@ -22,3 +22,8 @@ export const render = (container, component, place) => {
       break;
   }
 };
+
+export const removeElement = (component) => {
+  component.getElement().remove();
+  component.removeElement();
+};

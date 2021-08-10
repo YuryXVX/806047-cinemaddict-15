@@ -20,3 +20,7 @@ export const EmojiMap = freeze({
   puke: './images/emoji/puke.png',
   angry: './images/emoji/angry.png',
 });
+
+export const FILMS_COUNT_PER_STEP = 5;
+
+export const FILMS_COUNT = 12;
