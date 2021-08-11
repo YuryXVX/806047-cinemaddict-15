@@ -41,7 +41,31 @@ export default class App {
       classList: ['films-list'],
     });
 
+    this._topRatedFilmsSectionView = new Container({
+      title: 'Top rated',
+      classList: ['films-list films-list--extra'],
+      isExtra: true,
+      noHiddenTitle: true,
+    });
+
+    this._mostCommentedFilmsSectionView = new Container({
+      title: 'Most commented',
+      classList: ['films-list films-list--extra'],
+      isExtra: true,
+      noHiddenTitle: true,
+    });
+
     this._allFilmsListView = new Container({
+      tag: 'div',
+      classList: ['films-list__container'],
+    });
+
+    this._topRatedFilmsListView = new Container({
+      tag: 'div',
+      classList: ['films-list__container'],
+    });
+
+    this._mostCommentedFilmsListView = new Container({
       tag: 'div',
       classList: ['films-list__container'],
     });
@@ -65,8 +89,16 @@ export default class App {
       return;
     }
 
+    render(this._filmSectionView.getElement(), this._topRatedFilmsSectionView.getElement(), RenderPosition.BEFOREEND);
+    render(this._filmSectionView.getElement(), this._mostCommentedFilmsSectionView.getElement(), RenderPosition.BEFOREEND);
+
     render(this._allFilmsSectionView.getElement(), this._allFilmsListView.getElement(), RenderPosition.BEFOREEND);
+    render(this._topRatedFilmsSectionView.getElement(), this._topRatedFilmsListView.getElement(), RenderPosition.BEFOREEND);
+    render(this._mostCommentedFilmsSectionView.getElement(), this._mostCommentedFilmsListView.getElement(), RenderPosition.BEFOREEND);
+
     this._renderFilms(this._data.films.slice(0, this._showFilmsCount));
+    this._renderTopRatedFilms(this._data.topRated);
+    this._renderMostCommentedFilms(this._data.mostCommented);
 
     this._renderLoadMoreButton();
   }
@@ -78,6 +110,16 @@ export default class App {
 
     this._fimsController = this._fimsController.concat(filmsControlles);
     this._showFilmsCount = this._fimsController.length;
+  }
+
+  _renderTopRatedFilms(films) {
+    const container = this._topRatedFilmsListView.getElement();
+    renderFilmCardViews(container, films, this._data.commentsList);
+  }
+
+  _renderMostCommentedFilms(films) {
+    const container = this._mostCommentedFilmsListView.getElement();
+    renderFilmCardViews(container, films, this._data.commentsList);
   }
 
   _renderNoFilmsMessage() {
