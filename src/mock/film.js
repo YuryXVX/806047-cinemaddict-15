@@ -28,7 +28,8 @@ const getComment = (_, i) => ({
 });
 
 
-const getFilm = () => ({
+const getFilm = (_, index) => ({
+  id: index + 1,
   comments: getCommentsIdList(),
   info: {
     title: filmTitles[getRandomIntInclusive(0, filmTitles.length - 1)],

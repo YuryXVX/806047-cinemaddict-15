@@ -3,7 +3,7 @@ import { freeze } from './utils/helpers';
 export const FilterType = freeze({
   ALL: 'All Films',
   WATCHLIST: 'Watchlist',
-  FAVORITES: 'Favorites',
+  FAVORITE: 'Favorites',
   HISTORY: 'History',
 });
 
@@ -23,4 +23,7 @@ export const EmojiMap = freeze({
 
 export const FILMS_COUNT_PER_STEP = 5;
 
-export const FILMS_COUNT = 12;
+export const FILMS_COUNT = 4;
+
+export const PREFIX_CLASS_BUTTON = '.film-card__controls-item';
+

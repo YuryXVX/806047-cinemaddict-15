@@ -5,6 +5,7 @@ const getFilmsByFilter = (films, filter) => {
   if(filter === 'ALL') {
     return films;
   }
+
   return films.filter(({ details }) => details[filter.toLowerCase()]);
 };
 
@@ -39,5 +40,13 @@ export const getFilmsData = (filmCount) => {
     active: FilterType[filter] === FilterType.ALL,
   }));
 
-  return { films, topRated, mostCommented, filters, commentsList, userRating };
+  const updateFilters = (filmList) => (
+    Object.keys(FilterType).map((filter) => ({
+      name: FilterType[filter],
+      count: getFilmsByFilter(filmList, filter).length,
+      active: FilterType[filter] === FilterType.ALL,
+    }))
+  );
+
+  return { films, topRated, mostCommented, updateFilters, filters, commentsList, userRating };
 };

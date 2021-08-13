@@ -14,8 +14,9 @@ import { renderFilmCardViews } from './film';
 
 // constants
 import { FILMS_COUNT_PER_STEP } from '../const';
+import FilmDetailsPresenter from './film-details';
 
-export default class App {
+export default class AppPresenter {
   constructor({ header, main, footer }, data) {
     this._headerContainer = header;
     this._mainContainer = main;
@@ -23,7 +24,9 @@ export default class App {
 
     this._showFilmsCount = FILMS_COUNT_PER_STEP;
 
-    this._fimsController = [];
+    this._onDataChange = this._onDataChange.bind(this);
+
+    this._filmsPresenters = [];
 
     this._data = data;
 
@@ -72,6 +75,11 @@ export default class App {
 
     this._showMoreButton = null;
     this._noFilmsMessageView = null;
+
+    this._filmDetailsPresenter = null;
+    this._filmDetailsPresenters = new Set();
+
+    this._renderFilmDetailsPopup = this._renderFilmDetailsPopup.bind(this);
   }
 
   render() {
@@ -103,23 +111,80 @@ export default class App {
     this._renderLoadMoreButton();
   }
 
+  _updateFilterComponent() {
+    const filters = this._data.updateFilters(this._data.films);
+
+    removeElement(this._filterView);
+    this._filterView = new Filters(filters);
+
+    render(this._mainContainer, this._filterView.getElement(), RenderPosition.AFTERBEGIN);
+  }
+
+  _updateModels(oldData, newData) {
+    const index = this._data.films.findIndex((film) => film.id === oldData.id);
+    this._data.films = [].concat(this._data.films.slice(0, index), newData, this._data.films.slice(index + 1));
+
+    return new Promise((resolve) => resolve(newData));
+  }
+
+  _onDataChange(controller, oldData, newData) {
+    this._updateModels(oldData, newData)
+      .then(() => this._updateFilms(this._showFilmsCount));
+
+    controller.render(newData);
+
+    this._updateFilterComponent();
+  }
+
+  _removeFilms() {
+    this._filmsPresenters.forEach((filmPresenter) => filmPresenter.destroy());
+    this._filmsPresenters = [];
+  }
+
+  _destroyOpenedPopupDetails() {
+    if(this._filmDetailsPresenters.has(this._filmDetailsPresenter)) {
+      this._filmDetailsPresenters.forEach((it) => it.destroy());
+
+      this._filmDetailsPresenters.delete(this._filmDetailsPresenter);
+      this._filmDetailsPresenter = null;
+    }
+  }
+
+  _renderFilmDetailsPopup(film) {
+    this._destroyOpenedPopupDetails();
+
+    const model = {
+      ...film,
+      comments: this._data.commentsList.filter((comment) => film.comments.includes(comment.id)),
+    };
+
+    this._filmDetailsPresenter = new FilmDetailsPresenter(this._onDataChange);
+    this._filmDetailsPresenters.add(this._filmDetailsPresenter);
+    this._filmDetailsPresenter.render(model);
+  }
+
+  _updateFilms(filmsCount) {
+    this._removeFilms();
+    this._renderFilms(this._data.films.slice(0, filmsCount));
+  }
+
   _renderFilms(films) {
     const container = this._allFilmsListView.getElement();
 
-    const filmsControlles = renderFilmCardViews(container, films, this._data.commentsList);
+    const filmsControlles = renderFilmCardViews(container, films, this._onDataChange, this._renderFilmDetailsPopup);
 
-    this._fimsController = this._fimsController.concat(filmsControlles);
-    this._showFilmsCount = this._fimsController.length;
+    this._filmsPresenters = this._filmsPresenters.concat(filmsControlles);
+    this._showFilmsCount = this._filmsPresenters.length;
   }
 
   _renderTopRatedFilms(films) {
     const container = this._topRatedFilmsListView.getElement();
-    renderFilmCardViews(container, films, this._data.commentsList);
+    renderFilmCardViews(container, films, this._onDataChange, this._renderFilmDetailsPopup);
   }
 
   _renderMostCommentedFilms(films) {
     const container = this._mostCommentedFilmsListView.getElement();
-    renderFilmCardViews(container, films, this._data.commentsList);
+    renderFilmCardViews(container, films, this._onDataChange, this._renderFilmDetailsPopup);
   }
 
   _renderNoFilmsMessage() {

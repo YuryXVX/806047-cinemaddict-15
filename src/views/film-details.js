@@ -1,5 +1,5 @@
 import { getActiveClassButton } from '../utils/helpers';
-import { EmojiMap } from '../const';
+import { EmojiMap, PREFIX_CLASS_BUTTON } from '../const';
 import Component from './component';
 
 const createGenreListTemplate = (genre) => (
@@ -43,13 +43,13 @@ const createFilmDetailsTemplate = ({ comments, info, details }) => {
     release: { date, releaseCountry },
   } = info;
 
-  const { watchlist, alreadyWatched, favorite } = details;
+  const { watchlist, history, favorite } = details;
 
   const commentsList = createCommentsListTemplate(comments);
   const genresListTemplate = createGenreListTemplate(genre);
 
   const isActiveWatchListButton = getActiveClassButton(watchlist);
-  const isAlreadyWatchedButton = getActiveClassButton(alreadyWatched);
+  const isAlreadyWatchedButton = getActiveClassButton(history);
   const isActiveFavoriteButton = getActiveClassButton(favorite);
 
 
@@ -171,16 +171,37 @@ export default class FilmDetails extends Component {
     super();
     this._data = data;
     this._handler = handler;
+
+    this._formSubmitPrevent();
   }
 
   getTemplate() {
     return createFilmDetailsTemplate(this._data);
   }
 
+  _formSubmitPrevent() {
+    this.getElement().querySelector('form').addEventListener('submit', (evt) => evt.preventDefault());
+  }
+
   setCloseButtonClickHandler() {
     this.getElement()
       .querySelector('.film-details__close-btn')
       .addEventListener('click', this._handler);
+  }
+
+  setWatchButtonClickHandler(handler) {
+    const button = this.getElement().querySelector(`${PREFIX_CLASS_BUTTON}--add-to-watchlist`);
+    button.addEventListener('click', () => handler());
+  }
+
+  setAlreadyWatchedButtonClickHandler(handler) {
+    const alreadyWatchedButton = this.getElement().querySelector(`${PREFIX_CLASS_BUTTON}--mark-as-watched`);
+    alreadyWatchedButton.addEventListener('click', () => handler());
+  }
+
+  setFavoriteButtonClickHandler(handler) {
+    const favoriteFilmButton = this.getElement().querySelector(`${PREFIX_CLASS_BUTTON}--favorite`);
+    favoriteFilmButton.addEventListener('click', () => handler());
   }
 
   _removeListener() {
