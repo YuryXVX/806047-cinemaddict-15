@@ -1,7 +1,7 @@
 import { FilterType, ProfileRaiting } from '../const';
 import { getFilmsMockData, getCommentMockData } from './films';
 
-const getFilmsByFilter = (films, filter) => {
+export const getFilmsByFilter = (films, filter) => {
   if(filter === 'ALL') {
     return films;
   }
@@ -9,7 +9,7 @@ const getFilmsByFilter = (films, filter) => {
   return films.filter(({ details }) => details[filter.toLowerCase()]);
 };
 
-const getUserRaiting = (filmsCount) => {
+export const getUserRaiting = (filmsCount) => {
   if(filmsCount >= 1 && filmsCount <= 10) {
     return ProfileRaiting.NOVICE;
   }

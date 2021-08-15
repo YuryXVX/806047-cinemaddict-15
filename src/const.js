@@ -21,9 +21,15 @@ export const EmojiMap = freeze({
   angry: './images/emoji/angry.png',
 });
 
+export const SortType = freeze({
+  DEFAULT: 'default',
+  DATE: 'date',
+  RATING: 'rating',
+});
+
 export const FILMS_COUNT_PER_STEP = 5;
 
-export const FILMS_COUNT = 4;
+export const FILMS_COUNT = 30;
 
 export const PREFIX_CLASS_BUTTON = '.film-card__controls-item';
 
