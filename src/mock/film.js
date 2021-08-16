@@ -51,7 +51,7 @@ const getFilm = (_, index) => ({
   details: {
     watchlist: getRandomFlag(),
     history: getRandomFlag(),
-    watchingDate: '2019-04-12T16:12:32.554Z',
+    watchingDate: getRandomDate(new Date(2012, 0, 1), new Date()),
     favorite: getRandomFlag(),
   },
 });

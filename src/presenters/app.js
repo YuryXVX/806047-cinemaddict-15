@@ -6,7 +6,6 @@ import Footer from '../views/footer';
 import Profile from '../views/profile';
 
 // presenters
-import FilmDetailsPresenter from './film-details';
 import FilmList from './film-list';
 
 // constants
@@ -22,22 +21,36 @@ export default class App extends RootPresenter {
 
     this._profileComponent = null;
     this._filterComponent = null;
-    this._footerComponent = new Footer(this._store.films.length);
+    this._footerComponent = new Footer(this._model.films.length);
 
-    this._renderFilmDetailsPopup = this._renderFilmDetailsPopup.bind(this);
-    this._filmListPresenter = new FilmList(this._mainContainer, this._store, this._renderFilmDetailsPopup);
-    this._filmDetailsPresenter = null;
-    this._filmDetailsPresenters = new Set();
+    this._handleRaitingChange = this._handleRaitingChange.bind(this);
+
+    this._filmListPresenter = new FilmList(this._mainContainer, this._model, this._handleRaitingChange);
   }
 
-  _rerender() {
-    this._renderFilterComponent();
+  _rerenderFilterComponent({films}) {
+    this._handlerFiltersChange(films);
+  }
+
+  _handlerFiltersChange(value) {
+    const filters = this._model.updateFilters(value);
+    this._renderFilterComponent(this._model.activeFilter, filters);
+  }
+
+  _handleRaitingChange(value) {
+    this._model.updateRating(value);
     this._renderHeaderComponent();
+  }
+
+  _initFiltersListeners() {
+    this._filterComponent.setClickButtonFlilter((filter) => {
+      this._model.activeFilter = filter;
+    });
   }
 
   render() {
     this._renderHeaderComponent();
-    this._renderFilterComponent();
+    this._renderFilterComponent(this._model.activeFilter, this._model.filters);
     this._filmListPresenter.render();
     this._renderFooterComponent();
   }
@@ -45,7 +58,7 @@ export default class App extends RootPresenter {
   _renderHeaderComponent() {
     const oldComponent = this._profileComponent;
 
-    this._profileComponent = new Profile(this._store.userRating);
+    this._profileComponent = new Profile(this._model.userRating);
 
     if(!oldComponent) {
       return render(this._headerContainer, this._profileComponent.getElement(), RenderPosition.BEFOREEND);
@@ -58,38 +71,15 @@ export default class App extends RootPresenter {
     render(this._footerContainer, this._footerComponent.getElement(), RenderPosition.BEFOREEND);
   }
 
-  _renderFilterComponent() {
+  _renderFilterComponent(activeFilter, filters) {
     const oldComponent = this._filterComponent;
+    this._filterComponent = new Filters(activeFilter, filters);
 
-    this._filterComponent = new Filters(this._store.filters);
-
+    this._initFiltersListeners();
     if(!oldComponent) {
       return render(this._mainContainer, this._filterComponent.getElement(), RenderPosition.AFTERBEGIN);
     }
 
     replace(oldComponent, this._filterComponent);
-  }
-
-  _destroyOpenedPopupDetails() {
-    if(this._filmDetailsPresenters.has(this._filmDetailsPresenter)) {
-      this._filmDetailsPresenters.forEach((it) => it.destroy());
-
-      this._filmDetailsPresenters.delete(this._filmDetailsPresenter);
-      this._filmDetailsPresenter = null;
-    }
-  }
-
-  _renderFilmDetailsPopup(film) {
-    this._destroyOpenedPopupDetails();
-
-    const model = {
-      ...film,
-      comments: this._store.commentsList.filter((comment) => film.comments.includes(comment.id)),
-    };
-
-    // нужно прокинуть коллебек для изменненеия данных или перенести в презентор списка фильмов
-    this._filmDetailsPresenter = new FilmDetailsPresenter(this._onDataChange);
-    this._filmDetailsPresenters.add(this._filmDetailsPresenter);
-    this._filmDetailsPresenter.render(model);
   }
 }

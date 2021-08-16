@@ -29,7 +29,7 @@ export const SortType = freeze({
 
 export const FILMS_COUNT_PER_STEP = 5;
 
-export const FILMS_COUNT = 30;
+export const FILMS_COUNT = 21;
 
 export const PREFIX_CLASS_BUTTON = '.film-card__controls-item';
 

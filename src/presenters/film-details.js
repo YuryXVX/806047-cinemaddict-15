@@ -1,20 +1,24 @@
 import { classListRemove, deepClone } from '../utils/helpers';
 import { removeElement, render, RenderPosition, replace } from '../utils/render';
 import FilmDetails from '../views/film-details';
+import { RootPresenter } from './root-presenter';
 
-export default class FilmDetailsPresenter {
-  constructor(onDataChange) {
+export default class FilmDetailsPresenter extends RootPresenter {
+  constructor(store, onDataChange) {
+    super(store);
     this._filmDetailsView = null;
 
     this._id = null;
 
     this._data = null;
+    this._newData = null;
 
     this._onDataChange = onDataChange;
 
     this._onEscKeyDown = this._onEscKeyDown.bind(this);
     this._onClosePopup = this._onClosePopup.bind(this);
   }
+
 
   get modalId () {
     return this._id;
@@ -49,6 +53,7 @@ export default class FilmDetailsPresenter {
   render(data) {
     this._data = data;
     this._id = data.id;
+
 
     const oldFilmDetailsComponent = this._filmDetailsView;
     this._filmDetailsView = new FilmDetails(data, this._onClosePopup);
