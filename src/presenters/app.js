@@ -25,7 +25,7 @@ export default class App extends RootPresenter {
 
     this._handleRaitingChange = this._handleRaitingChange.bind(this);
 
-    this._filmListPresenter = new FilmList(this._mainContainer, this._model, this._handleRaitingChange);
+    this._filmListPresenter = new FilmList(this._model, this._handleRaitingChange);
   }
 
   _rerenderFilterComponent({films}) {
@@ -51,7 +51,7 @@ export default class App extends RootPresenter {
   render() {
     this._renderHeaderComponent();
     this._renderFilterComponent(this._model.activeFilter, this._model.filters);
-    this._filmListPresenter.render();
+    this._filmListPresenter.render(this._mainContainer);
     this._renderFooterComponent();
   }
 

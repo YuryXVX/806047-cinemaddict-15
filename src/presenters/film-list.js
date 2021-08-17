@@ -1,6 +1,6 @@
 import { FILMS_COUNT_PER_STEP } from '../const';
 import { render, RenderPosition, replace, removeElement } from '../utils/render';
-import { renderFilmCardViews } from './film';
+import { getFilmPresenters } from './film';
 import { RootPresenter } from './root-presenter';
 
 // views
@@ -13,10 +13,11 @@ import ShowMoreButton from '../views/show-more-button';
 import FilmDetailsPresenter from './film-details';
 
 export default class FilmListPresenter extends RootPresenter {
-  constructor(mainElement, store, handleRaitingChange) {
+  constructor(store, handleRaitingChange) {
     super(store);
 
-    this._mainDomElement = mainElement;
+    this._container = null;
+
     this._containerComponent = new Container({classList: ['films']});
     this._filmListComponent = new Container({ title: 'All movies. Upcoming', classList: ['films-list'] });
     this._filmListContainerComponent = new Container({ tag: 'div', classList: ['films-list__container'] });
@@ -50,7 +51,9 @@ export default class FilmListPresenter extends RootPresenter {
     });
   }
 
-  render() {
+  render(container) {
+    this._container = container;
+
     this._renderSortComponent(this._model.activeSortButton);
     this._renderAllFilms();
     this._renderLoadMoreButton();
@@ -63,14 +66,14 @@ export default class FilmListPresenter extends RootPresenter {
     this._initListeners();
 
     if(!oldComponent) {
-      return render(this._mainDomElement, this._sortComponent.getElement(), RenderPosition.BEFOREEND);
+      return render(this._container, this._sortComponent.getElement(), RenderPosition.BEFOREEND);
     }
 
     replace(oldComponent, this._sortComponent);
   }
 
   _renderAllFilms() {
-    render(this._mainDomElement, this._containerComponent.getElement(), RenderPosition.BEFOREEND);
+    render(this._container, this._containerComponent.getElement(), RenderPosition.BEFOREEND);
     render(this._containerComponent.getElement(), this._filmListComponent.getElement(), RenderPosition.BEFOREEND);
     render(this._filmListComponent.getElement(), this._filmListContainerComponent.getElement(), RenderPosition.BEFOREEND);
 
@@ -96,7 +99,7 @@ export default class FilmListPresenter extends RootPresenter {
 
     const container = this._filmListContainerComponent.getElement();
 
-    const filmsPresenters = renderFilmCardViews(container, films, this._handleDataChange, this._handleRenderFilmDetailsPopup);
+    const filmsPresenters = getFilmPresenters(container, films, this._handleDataChange, this._handleRenderFilmDetailsPopup);
 
     this._filmsPresenters = this._filmsPresenters.concat(filmsPresenters);
     this._showFilmsCount = this._filmsPresenters.length;
@@ -105,6 +108,7 @@ export default class FilmListPresenter extends RootPresenter {
   _handleDataChange(controller, oldData, newData) {
     this._model.updateFilm(oldData, newData);
     controller.render(newData);
+
     this._updateFilms(this._showFilmsCount);
     this._handleRatingChange(this._model.films);
     this._model.updateFilters(this._model.films);
@@ -148,7 +152,7 @@ export default class FilmListPresenter extends RootPresenter {
     }
   }
 
-  _destroyOpenePopupDetails() {
+  _destroyOpenPopupDetails() {
     if(this._filmDetailsPresenters.has(this._filmDetailsPresenter)) {
       this._filmDetailsPresenters.forEach((it) => it.destroy());
 
@@ -158,7 +162,7 @@ export default class FilmListPresenter extends RootPresenter {
   }
 
   _renderFilmDetailsPopup(film) {
-    this._destroyOpenePopupDetails();
+    this._destroyOpenPopupDetails();
 
     const model = {
       ...film,

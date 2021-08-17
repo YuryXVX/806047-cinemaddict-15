@@ -28,7 +28,7 @@ const createCommentsListTemplate = (comments) => (
   `<ul class="film-details__comments-list">${ comments.map(cretateCommentTemplate).join('') }</ul>`
 );
 
-const createFilmDetailsTemplate = ({ comments, info, details }) => {
+const createFilmDetailsTemplate = ({ comments, info, filmDetails }) => {
   const {
     poster,
     title,
@@ -43,7 +43,7 @@ const createFilmDetailsTemplate = ({ comments, info, details }) => {
     release: { date, releaseCountry },
   } = info;
 
-  const { watchlist, history, favorite } = details;
+  const { watchlist, history, favorite } = filmDetails;
 
   const commentsList = createCommentsListTemplate(comments);
   const genresListTemplate = createGenreListTemplate(genre);

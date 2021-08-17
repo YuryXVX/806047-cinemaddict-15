@@ -2,9 +2,9 @@ import { PREFIX_CLASS_BUTTON } from '../const';
 import { getActiveClassButton } from '../utils/helpers';
 import Component from './component';
 
-const createFilmCardTemplate = ({ comments, details, info }) => {
+const createFilmCardTemplate = ({ comments, filmDetails, info }) => {
   const { poster, title, description, genre, totalRating, release: { date }, runtime} = info;
-  const { watchlist, history, favorite } = details;
+  const { watchlist, history, favorite } = filmDetails;
 
   const isActiveWatchListButton = getActiveClassButton(watchlist);
   const isAlreadyWatchedButton = getActiveClassButton(history);

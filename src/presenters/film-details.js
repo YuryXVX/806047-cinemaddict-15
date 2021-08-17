@@ -63,21 +63,21 @@ export default class FilmDetailsPresenter extends RootPresenter {
     this._filmDetailsView.setWatchButtonClickHandler(() => {
       const newData = deepClone(this._data);
 
-      newData.details.watchlist = !newData.details.watchlist;
+      newData.filmDetails.watchlist = !newData.filmDetails.watchlist;
       this._onDataChange(this, data, newData);
     });
 
     this._filmDetailsView.setAlreadyWatchedButtonClickHandler(() => {
       const newData = deepClone(this._data);
 
-      newData.details.history = !newData.details.history;
+      newData.filmDetails.history = !newData.filmDetails.history;
       this._onDataChange(this, data, newData);
     });
 
     this._filmDetailsView.setFavoriteButtonClickHandler(() => {
       const newData = deepClone(this._data);
 
-      newData.details.favorite = !newData.details.favorite;
+      newData.filmDetails.favorite = !newData.filmDetails.favorite;
       this._onDataChange(this, data, newData);
     });
 

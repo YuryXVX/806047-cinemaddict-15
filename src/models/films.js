@@ -3,14 +3,17 @@ import { getFilmsByFilter, getUserRaiting } from '../mock';
 
 const getSortFilms = (films ,sortType = SortType.DEFAULT) => {
   switch(sortType) {
-    case SortType.RATING:
+    case SortType.RATING: {
       return films.slice().sort((a, b) => a.info.totalRating > b.info.totalRating ? -1 : 0);
+    }
 
-    case SortType.DATE:
-      return films.slice().sort((a, b) => new Date(a.details.watchingDate) - new Date(b.details.watchingDate));
+    case SortType.DATE: {
+      return films.slice().sort((a, b) => new Date(a.filmDetails.watchingDate) - new Date(b.filmDetails.watchingDate));
+    }
 
-    default:
+    default: {
       return films.slice();
+    }
   }
 };
 

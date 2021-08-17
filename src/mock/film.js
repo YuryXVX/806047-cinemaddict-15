@@ -48,7 +48,7 @@ const getFilm = (_, index) => ({
     genre: genre,
     description: filmDescriptions[getRandomIntInclusive(0, filmDescriptions.length - 1)],
   },
-  details: {
+  filmDetails: {
     watchlist: getRandomFlag(),
     history: getRandomFlag(),
     watchingDate: getRandomDate(new Date(2012, 0, 1), new Date()),

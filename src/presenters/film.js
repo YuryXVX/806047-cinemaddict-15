@@ -5,11 +5,11 @@ import { removeElement, render, RenderPosition, replace } from '../utils/render'
 import FilmCard from '../views/film-card';
 
 export default class FilmPresenter {
-  constructor(container, data, onDataChange, handlePopupRender) {
+  constructor(container, data, handleDataChange, handlePopupRender) {
     this._data = data;
     this._container = container;
 
-    this._onDataChange = onDataChange;
+    this._handleDataChange = handleDataChange;
     this._handlePopupRender = handlePopupRender;
 
     this._filmCardView = null;
@@ -46,23 +46,23 @@ export default class FilmPresenter {
 
     this._filmCardView.setWatchButtonClickHandler(() => {
       const newData = deepClone(this._data);
-      newData.details.watchlist = !newData.details.watchlist;
+      newData.filmDetails.watchlist = !newData.filmDetails.watchlist;
 
-      this._onDataChange(this, this._data, newData);
+      this._handleDataChange(this, this._data, newData);
     });
 
     this._filmCardView.setAlreadyWatchedButtonClickHandler(() => {
       const newData = deepClone(this._data);
-      newData.details.history = !newData.details.history;
+      newData.filmDetails.history = !newData.filmDetails.history;
 
-      this._onDataChange(this, this._data, newData);
+      this._handleDataChange(this, this._data, newData);
     });
 
     this._filmCardView.setFavoriteButtonClickHandler(() => {
       const newData = deepClone(this._data);
-      newData.details.favorite = !newData.details.favorite;
+      newData.filmDetails.favorite = !newData.filmDetails.favorite;
 
-      this._onDataChange(this, this._data, newData);
+      this._handleDataChange(this, this._data, newData);
     });
   }
 
@@ -71,8 +71,8 @@ export default class FilmPresenter {
   }
 }
 
-export const renderFilmCardViews = (container, films, onDataChange, onRenderPopup) => films.map((film) => {
-  const filmController = new FilmPresenter(container, film, onDataChange, onRenderPopup);
-  filmController.render(film);
-  return filmController;
+export const getFilmPresenters = (container, films, handleDataChange, onRenderPopup) => films.map((film) => {
+  const filmPresenter = new FilmPresenter(container, film, handleDataChange, onRenderPopup);
+  filmPresenter.render(film);
+  return filmPresenter;
 });

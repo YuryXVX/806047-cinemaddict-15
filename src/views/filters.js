@@ -1,11 +1,11 @@
 import { FilterType } from '../const';
 import Component from './component';
 
-const createFilterButtonTemplate = (active, filter) => {
-  const { name, count } = filter;
+const createFilterButtonTemplate = (active, filterItem) => {
+  const { name, count } = filterItem;
 
-  const [keys] = Object.entries(FilterType).find((filtertype) => {
-    const [, value] = filtertype;
+  const [keys] = Object.entries(FilterType).find((filter) => {
+    const [, value] = filter;
     return value === name;
   });
 
