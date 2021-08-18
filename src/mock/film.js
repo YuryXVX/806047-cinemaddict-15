@@ -28,7 +28,8 @@ const getComment = (_, i) => ({
 });
 
 
-const getFilm = () => ({
+const getFilm = (_, index) => ({
+  id: index + 1,
   comments: getCommentsIdList(),
   info: {
     title: filmTitles[getRandomIntInclusive(0, filmTitles.length - 1)],
@@ -47,10 +48,10 @@ const getFilm = () => ({
     genre: genre,
     description: filmDescriptions[getRandomIntInclusive(0, filmDescriptions.length - 1)],
   },
-  details: {
+  filmDetails: {
     watchlist: getRandomFlag(),
     history: getRandomFlag(),
-    watchingDate: '2019-04-12T16:12:32.554Z',
+    watchingDate: getRandomDate(new Date(2012, 0, 1), new Date()),
     favorite: getRandomFlag(),
   },
 });

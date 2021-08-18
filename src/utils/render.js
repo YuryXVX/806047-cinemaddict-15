@@ -1,3 +1,4 @@
+import Component from '../views/component';
 import { freeze } from './helpers';
 
 export const RenderPosition = freeze({
@@ -26,4 +27,24 @@ export const render = (container, component, place) => {
 export const removeElement = (component) => {
   component.getElement().remove();
   component.removeElement();
+};
+
+export const replace = (oldComponent, newComponent) => {
+  let oldElement;
+  let newElement;
+
+  if (oldComponent instanceof Component) {
+    oldElement = oldComponent.getElement();
+  }
+
+  if (newComponent instanceof Component) {
+    newElement = newComponent.getElement();
+  }
+
+  if(oldElement === null || newElement === null) {
+    throw new Error('Can\'t replace unexisting elements');
+  }
+
+  oldElement.replaceWith(newElement);
+  removeElement(oldComponent);
 };

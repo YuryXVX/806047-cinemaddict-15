@@ -1,14 +1,15 @@
 import { FilterType, ProfileRaiting } from '../const';
 import { getFilmsMockData, getCommentMockData } from './films';
 
-const getFilmsByFilter = (films, filter) => {
+export const getFilmsByFilter = (films, filter) => {
   if(filter === 'ALL') {
     return films;
   }
-  return films.filter(({ details }) => details[filter.toLowerCase()]);
+
+  return films.filter(({ filmDetails }) => filmDetails[filter.toLowerCase()]);
 };
 
-const getUserRaiting = (filmsCount) => {
+export const getUserRaiting = (filmsCount) => {
   if(filmsCount >= 1 && filmsCount <= 10) {
     return ProfileRaiting.NOVICE;
   }
@@ -39,5 +40,13 @@ export const getFilmsData = (filmCount) => {
     active: FilterType[filter] === FilterType.ALL,
   }));
 
-  return { films, topRated, mostCommented, filters, commentsList, userRating };
+  const updateFilters = (filmList) => (
+    Object.keys(FilterType).map((filter) => ({
+      name: FilterType[filter],
+      count: getFilmsByFilter(filmList, filter).length,
+      active: FilterType[filter] === FilterType.ALL,
+    }))
+  );
+
+  return { films, topRated, mostCommented, updateFilters, filters, commentsList, userRating };
 };

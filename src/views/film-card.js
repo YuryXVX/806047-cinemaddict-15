@@ -1,13 +1,13 @@
+import { PREFIX_CLASS_BUTTON } from '../const';
 import { getActiveClassButton } from '../utils/helpers';
 import Component from './component';
 
-
-const createFilmCardTemplate = ({ comments, details, info }) => {
+const createFilmCardTemplate = ({ comments, filmDetails, info }) => {
   const { poster, title, description, genre, totalRating, release: { date }, runtime} = info;
-  const { watchlist, alreadyWatched, favorite } = details;
+  const { watchlist, history, favorite } = filmDetails;
 
   const isActiveWatchListButton = getActiveClassButton(watchlist);
-  const isAlreadyWatchedButton = getActiveClassButton(alreadyWatched);
+  const isAlreadyWatchedButton = getActiveClassButton(history);
   const isActiveFavoriteButton = getActiveClassButton(favorite);
 
   const [,,year] = date.split(' ');
@@ -37,6 +37,21 @@ export default class FilmCard extends Component {
   constructor(data) {
     super();
     this._data = data;
+  }
+
+  setWatchButtonClickHandler(handler) {
+    const watchFilmButton = this.getElement().querySelector(`${PREFIX_CLASS_BUTTON}--add-to-watchlist`);
+    watchFilmButton.addEventListener('click', () => handler(this._data));
+  }
+
+  setAlreadyWatchedButtonClickHandler(handler) {
+    const alreadyWatchedButton = this.getElement().querySelector(`${PREFIX_CLASS_BUTTON}--mark-as-watched`);
+    alreadyWatchedButton.addEventListener('click', () => handler(this._data));
+  }
+
+  setFavoriteButtonClickHandler(handler) {
+    const favoriteFilmButton = this.getElement().querySelector(`${PREFIX_CLASS_BUTTON}--favorite`);
+    favoriteFilmButton.addEventListener('click', () => handler(this._data));
   }
 
   getTemplate() {
