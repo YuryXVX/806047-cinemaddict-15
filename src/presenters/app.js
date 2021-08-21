@@ -1,4 +1,4 @@
-import { render, RenderPosition, replace } from '../utils/render';
+import { render, RenderPosition } from '../utils/render';
 
 // views
 import Filters from '../views/filters';
@@ -24,12 +24,18 @@ export default class App extends RootPresenter {
     this._footerComponent = new Footer(this._model.films.length);
 
     this._handleRaitingChange = this._handleRaitingChange.bind(this);
+    this._handleChangeFilter = this._handleChangeFilter.bind(this);
+    this._handleFiltersCountChange = this._handleFiltersCountChange.bind(this);
 
-    this._filmListPresenter = new FilmList(this._model, this._handleRaitingChange);
+    this._filmListPresenter = new FilmList(this._model, this._handleRaitingChange, this._handleFiltersCountChange);
   }
 
-  _rerenderFilterComponent({films}) {
-    this._handlerFiltersChange(films);
+  _rerender({ activeFilter }) {
+    this._filterComponent.activeFilter = activeFilter;
+  }
+
+  _handleFiltersCountChange() {
+    this._filterComponent.filters = this._model.updateFilters();
   }
 
   _handlerFiltersChange(value) {
@@ -39,13 +45,11 @@ export default class App extends RootPresenter {
 
   _handleRaitingChange(value) {
     this._model.updateRating(value);
-    this._renderHeaderComponent();
+    this._profileComponent.raiting = this._model.userRating;
   }
 
-  _initFiltersListeners() {
-    this._filterComponent.setClickButtonFlilter((filter) => {
-      this._model.activeFilter = filter;
-    });
+  _handleChangeFilter(filter) {
+    this._model.activeFilter = filter;
   }
 
   render() {
@@ -56,15 +60,8 @@ export default class App extends RootPresenter {
   }
 
   _renderHeaderComponent() {
-    const oldComponent = this._profileComponent;
-
     this._profileComponent = new Profile(this._model.userRating);
-
-    if(!oldComponent) {
-      return render(this._headerContainer, this._profileComponent.getElement(), RenderPosition.BEFOREEND);
-    }
-
-    replace(oldComponent, this._profileComponent);
+    render(this._headerContainer, this._profileComponent.getElement(), RenderPosition.BEFOREEND);
   }
 
   _renderFooterComponent() {
@@ -72,14 +69,9 @@ export default class App extends RootPresenter {
   }
 
   _renderFilterComponent(activeFilter, filters) {
-    const oldComponent = this._filterComponent;
     this._filterComponent = new Filters(activeFilter, filters);
+    this._filterComponent.handleChangeFilter = this._handleChangeFilter;
 
-    this._initFiltersListeners();
-    if(!oldComponent) {
-      return render(this._mainContainer, this._filterComponent.getElement(), RenderPosition.AFTERBEGIN);
-    }
-
-    replace(oldComponent, this._filterComponent);
+    render(this._mainContainer, this._filterComponent.getElement(), RenderPosition.AFTERBEGIN);
   }
 }

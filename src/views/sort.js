@@ -16,7 +16,7 @@ const createSortTemplate = (active) =>(
   </ul>`
 );
 
-export default class Sort extends Component {
+export default class SortView extends Component {
   constructor(activeButton = SortType.DEFAULT) {
     super();
 

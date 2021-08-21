@@ -1,5 +1,4 @@
-import { getActiveClassButton } from '../utils/helpers';
-import { EmojiMap, PREFIX_CLASS_BUTTON } from '../const';
+import { EmojiMap } from '../const';
 import Component from './component';
 
 const createGenreListTemplate = (genre) => (
@@ -28,7 +27,7 @@ const createCommentsListTemplate = (comments) => (
   `<ul class="film-details__comments-list">${ comments.map(cretateCommentTemplate).join('') }</ul>`
 );
 
-const createFilmDetailsTemplate = ({ comments, info, filmDetails }) => {
+const createFilmDetailsTemplate = ({ comments, info }) => {
   const {
     poster,
     title,
@@ -43,15 +42,8 @@ const createFilmDetailsTemplate = ({ comments, info, filmDetails }) => {
     release: { date, releaseCountry },
   } = info;
 
-  const { watchlist, history, favorite } = filmDetails;
-
   const commentsList = createCommentsListTemplate(comments);
   const genresListTemplate = createGenreListTemplate(genre);
-
-  const isActiveWatchListButton = getActiveClassButton(watchlist);
-  const isAlreadyWatchedButton = getActiveClassButton(history);
-  const isActiveFavoriteButton = getActiveClassButton(favorite);
-
 
   return `<section class="film-details">
   <form class="film-details__inner" action="" method="get">
@@ -114,12 +106,6 @@ const createFilmDetailsTemplate = ({ comments, info, filmDetails }) => {
           </p>
         </div>
       </div>
-  
-      <section class="film-details__controls">
-        <button class="film-card__controls-item film-card__controls-item--add-to-watchlist ${isActiveWatchListButton}" type="button">Add to watchlist</button>
-        <button class="film-card__controls-item film-card__controls-item--mark-as-watched ${isAlreadyWatchedButton}" type="button">Mark as watched</button>
-        <button class="film-card__controls-item film-card__controls-item--favorite ${isActiveFavoriteButton}" type="button">Mark as favorite</button>
-      </section>
     </div>
   
     <div class="film-details__bottom-container">
@@ -128,37 +114,6 @@ const createFilmDetailsTemplate = ({ comments, info, filmDetails }) => {
     
         ${commentsList}
       
-        <div class="film-details__new-comment">
-          <div class="film-details__add-emoji-label">
-            <img src="images/emoji/smile.png" width="55" height="55" alt="emoji-smile">
-          </div>
-  
-          <label class="film-details__comment-label">
-            <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">Great movie!</textarea>
-          </label>
-  
-          <div class="film-details__emoji-list">
-            <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-smile" value="smile" checked>
-            <label class="film-details__emoji-label" for="emoji-smile">
-              <img src="./images/emoji/smile.png" width="30" height="30" alt="emoji">
-            </label>
-  
-            <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-sleeping" value="sleeping">
-            <label class="film-details__emoji-label" for="emoji-sleeping">
-              <img src="./images/emoji/sleeping.png" width="30" height="30" alt="emoji">
-            </label>
-  
-            <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-puke" value="puke">
-            <label class="film-details__emoji-label" for="emoji-puke">
-              <img src="./images/emoji/puke.png" width="30" height="30" alt="emoji">
-            </label>
-  
-            <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-angry" value="angry">
-            <label class="film-details__emoji-label" for="emoji-angry">
-              <img src="./images/emoji/angry.png" width="30" height="30" alt="emoji">
-            </label>
-          </div>
-        </div>
       </section>
     </div>
   </form>
@@ -175,8 +130,17 @@ export default class FilmDetails extends Component {
     this._formSubmitPrevent();
   }
 
+  get filmsDetailsCommentWrap() {
+    return this.element.querySelector('.film-details__comments-wrap');
+  }
+
   getTemplate() {
     return createFilmDetailsTemplate(this._data);
+  }
+
+  get filmListDetailsContainer() {
+    const container = this.getElement().querySelector('.film-details__top-container');
+    return container;
   }
 
   _formSubmitPrevent() {
@@ -189,22 +153,7 @@ export default class FilmDetails extends Component {
       .addEventListener('click', this._handler);
   }
 
-  setWatchButtonClickHandler(handler) {
-    const button = this.getElement().querySelector(`${PREFIX_CLASS_BUTTON}--add-to-watchlist`);
-    button.addEventListener('click', () => handler());
-  }
-
-  setAlreadyWatchedButtonClickHandler(handler) {
-    const alreadyWatchedButton = this.getElement().querySelector(`${PREFIX_CLASS_BUTTON}--mark-as-watched`);
-    alreadyWatchedButton.addEventListener('click', () => handler());
-  }
-
-  setFavoriteButtonClickHandler(handler) {
-    const favoriteFilmButton = this.getElement().querySelector(`${PREFIX_CLASS_BUTTON}--favorite`);
-    favoriteFilmButton.addEventListener('click', () => handler());
-  }
-
-  _removeListener() {
+  _removeEventListener() {
     this.getElement()
       .querySelector('.film-details__close-btn')
       .removeEventListener('click', this._handler);

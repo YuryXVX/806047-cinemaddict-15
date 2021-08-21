@@ -27,6 +27,11 @@ export const SortType = freeze({
   RATING: 'rating',
 });
 
+export const ModeView = freeze({
+  MODAL: 'modal',
+  DEFAULT: 'default',
+});
+
 export const FILMS_COUNT_PER_STEP = 5;
 
 export const FILMS_COUNT = 21;

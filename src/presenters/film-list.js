@@ -1,4 +1,4 @@
-import { FILMS_COUNT_PER_STEP } from '../const';
+import { FILMS_COUNT_PER_STEP, ModeView } from '../const';
 import { render, RenderPosition, replace, removeElement } from '../utils/render';
 import { getFilmPresenters } from './film';
 import { RootPresenter } from './root-presenter';
@@ -13,7 +13,7 @@ import ShowMoreButton from '../views/show-more-button';
 import FilmDetailsPresenter from './film-details';
 
 export default class FilmListPresenter extends RootPresenter {
-  constructor(store, handleRaitingChange) {
+  constructor(store, handleRaitingChange, handleFiltersCountChange) {
     super(store);
 
     this._container = null;
@@ -32,6 +32,7 @@ export default class FilmListPresenter extends RootPresenter {
     this._handleDataChange = this._handleDataChange.bind(this);
     this._handleRenderFilmDetailsPopup = this._renderFilmDetailsPopup.bind(this);
     this._handleRatingChange = handleRaitingChange;
+    this._handleFiltersCountChange = handleFiltersCountChange;
 
     this._showFilmsCount = FILMS_COUNT_PER_STEP;
   }
@@ -105,13 +106,20 @@ export default class FilmListPresenter extends RootPresenter {
     this._showFilmsCount = this._filmsPresenters.length;
   }
 
-  _handleDataChange(controller, oldData, newData) {
+  _handleDataChange(controller, oldData, newData, mode) {
     this._model.updateFilm(oldData, newData);
-    controller.render(newData);
+
+    if(mode === ModeView.MODAL) {
+      controller.setData(newData);
+    } else {
+      controller.render(newData);
+    }
 
     this._updateFilms(this._showFilmsCount);
     this._handleRatingChange(this._model.films);
-    this._model.updateFilters(this._model.films);
+    this._handleFiltersCountChange(this._model.films);
+
+    // this._model.updateFilters(this._model.films);
   }
 
   _renderNoFilmsMessage() {
@@ -164,14 +172,9 @@ export default class FilmListPresenter extends RootPresenter {
   _renderFilmDetailsPopup(film) {
     this._destroyOpenPopupDetails();
 
-    const model = {
-      ...film,
-      comments: this._model.commentsList.filter((comment) => film.comments.includes(comment.id)),
-    };
-
     this._filmDetailsPresenter = new FilmDetailsPresenter(this._model, this._handleDataChange);
     this._filmDetailsPresenters.add(this._filmDetailsPresenter);
-    this._filmDetailsPresenter.render(model);
+    this._filmDetailsPresenter.render(film);
   }
 
   destroy() {

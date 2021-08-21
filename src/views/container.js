@@ -10,7 +10,7 @@ const createContainerTemplate = ({ tag, classList, title, hiddenTitle }) => {
   `);
 };
 
-export default class Container extends Component {
+export default class ContainerView extends Component {
   constructor({ classList, isExtra, title, tag, noHiddenTitle }) {
     super();
 
