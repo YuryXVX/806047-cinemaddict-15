@@ -24,7 +24,7 @@ export default class FilmDetailsPresenter extends RootPresenter {
 
     this._onDataChange = onDataChange;
 
-    this._onEscKeyDown = this._onEscKeyDown.bind(this);
+    this._handleClosePopupKeyDown = this._handleClosePopupKeyDown.bind(this);
     this._onClosePopup = this._onClosePopup.bind(this);
 
     this._handleWatchListButton = this._handleWatchListButton.bind(this);
@@ -42,16 +42,21 @@ export default class FilmDetailsPresenter extends RootPresenter {
   }
 
   _removePopup() {
-    document.removeEventListener('keyup', this._onEscKeyDown);
+    document.removeEventListener('keyup', this._handleClosePopupKeyDown);
     classListRemove(document.body, 'hide-overflow');
 
     if(this._filmDetailsView) {
       removeElement(this._filmDetailsView);
+      removeElement(this._filmDetailsNewCommentView);
+      removeElement(this._filmDetailsControls);
+
       this._filmDetailsView = null;
+      this._filmDetailsControls = null;
+      this._filmDetailsNewCommentView = null;
     }
   }
 
-  _onEscKeyDown(evt) {
+  _handleClosePopupKeyDown(evt) {
     const isEscKey = evt.key === 'Escape' || evt.key === 'Esc';
 
     if(isEscKey) {
@@ -102,7 +107,7 @@ export default class FilmDetailsPresenter extends RootPresenter {
     this._filmDetailsControls = new FilmDetailsControls(data);
     this._filmDetailsNewCommentView = new FilmDetailsNewCommentView();
 
-    document.addEventListener('keyup', this._onEscKeyDown);
+    document.addEventListener('keyup', this._handleClosePopupKeyDown);
 
     render(this._filmDetailsView.filmListDetailsContainer, this._filmDetailsControls.getElement(), RenderPosition.BEFOREEND);
     render(this._filmDetailsView.filmsDetailsCommentWrap, this._filmDetailsNewCommentView.getElement(), RenderPosition.BEFOREEND);

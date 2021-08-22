@@ -22,7 +22,26 @@ export default class SortView extends Component {
 
     this._activeButton = activeButton;
 
-    this._handler = null;
+    this.handleChangeSort = null;
+    this._handleChangeSortItem = this._handleChangeSortItem.bind(this);
+  }
+
+  _handleChangeSortItem(evt) {
+    evt.preventDefault();
+
+    const button = evt.target.closest('[data-sort]');
+
+    if(button) {
+      this.handleChangeSort(button.dataset.sort);
+    }
+  }
+
+  _addEventListeners() {
+    this.element.addEventListener('click', this._handleChangeSortItem);
+  }
+
+  _removeEventListener() {
+    this.element.removeEventListener('click', this._handleChangeSortItem);
   }
 
   get activeButton() {
@@ -31,22 +50,11 @@ export default class SortView extends Component {
 
   set activeButton(value) {
     this._activeButton = value;
+    this.updateComponent();
   }
 
   getTemplate() {
     return createSortTemplate(this.activeButton);
-  }
-
-  setSortButtonClickHandler(handler) {
-    this._handler = handler;
-    this.getElement().addEventListener('click', (evt) => {
-      evt.preventDefault();
-      const button = evt.target.closest('[data-sort]');
-
-      if(button) {
-        this._handler(button.dataset.sort);
-      }
-    });
   }
 }
 

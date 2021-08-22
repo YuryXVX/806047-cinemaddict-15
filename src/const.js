@@ -14,6 +14,11 @@ export const ProfileRaiting = freeze({
   NOTHING: '',
 });
 
+export const KeyCode = freeze({
+  ESCAPE: 'Escape',
+  ENTER: 'Enter',
+});
+
 export const EmojiMap = freeze({
   smile: './images/emoji/smile.png',
   sleeping: './images/emoji/sleeping.png',
@@ -34,7 +39,7 @@ export const ModeView = freeze({
 
 export const FILMS_COUNT_PER_STEP = 5;
 
-export const FILMS_COUNT = 21;
+export const FILMS_COUNT = 11;
 
 export const PREFIX_CLASS_BUTTON = '.film-card__controls-item';
 

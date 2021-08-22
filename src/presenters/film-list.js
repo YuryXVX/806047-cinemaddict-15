@@ -1,5 +1,5 @@
 import { FILMS_COUNT_PER_STEP, ModeView } from '../const';
-import { render, RenderPosition, replace, removeElement } from '../utils/render';
+import { render, RenderPosition, removeElement } from '../utils/render';
 import { getFilmPresenters } from './film';
 import { RootPresenter } from './root-presenter';
 
@@ -31,25 +31,20 @@ export default class FilmListPresenter extends RootPresenter {
 
     this._handleDataChange = this._handleDataChange.bind(this);
     this._handleRenderFilmDetailsPopup = this._renderFilmDetailsPopup.bind(this);
+    this._handleChangeSortData = this._handleChangeSortData.bind(this);
+
     this._handleRatingChange = handleRaitingChange;
     this._handleFiltersCountChange = handleFiltersCountChange;
 
     this._showFilmsCount = FILMS_COUNT_PER_STEP;
   }
 
-  _rerender({ activeSortButton }) {
-    this._renderSortComponent(activeSortButton);
+  _rerender({ films }) {
+    if(films.length) {
+      removeElement(this._noFilmsMessageComponent);
+    }
+
     this._updateFilms(FILMS_COUNT_PER_STEP);
-  }
-
-  _initListeners() {
-    this._sortComponent.setSortButtonClickHandler((activeSortButton) => {
-      if(activeSortButton === this._model.activeSortButton) {
-        return;
-      }
-
-      this._model.activeSortButton = activeSortButton;
-    });
   }
 
   render(container) {
@@ -60,17 +55,20 @@ export default class FilmListPresenter extends RootPresenter {
     this._renderLoadMoreButton();
   }
 
-  _renderSortComponent(activeSortButton) {
-    const oldComponent = this._sortComponent;
-    this._sortComponent = new Sort(activeSortButton);
-
-    this._initListeners();
-
-    if(!oldComponent) {
-      return render(this._container, this._sortComponent.getElement(), RenderPosition.BEFOREEND);
+  _handleChangeSortData(activeSort) {
+    if(activeSort === this._model.activeSortButton) {
+      return;
     }
 
-    replace(oldComponent, this._sortComponent);
+    this._model.activeSortButton = activeSort;
+    this._sortComponent.activeButton = this._model.activeSortButton;
+  }
+
+  _renderSortComponent() {
+    this._sortComponent = new Sort();
+    this._sortComponent.handleChangeSort = this._handleChangeSortData;
+
+    render(this._container, this._sortComponent.getElement(), RenderPosition.BEFOREEND);
   }
 
   _renderAllFilms() {
@@ -118,15 +116,12 @@ export default class FilmListPresenter extends RootPresenter {
     this._updateFilms(this._showFilmsCount);
     this._handleRatingChange(this._model.films);
     this._handleFiltersCountChange(this._model.films);
-
-    // this._model.updateFilters(this._model.films);
   }
 
   _renderNoFilmsMessage() {
     const container = this._filmListComponent.getElement();
 
     this._noFilmsMessageComponent = new NoFilmsMessage();
-    removeElement(this._sortComponent);
     render(container, this._noFilmsMessageComponent.getElement(), RenderPosition.AFTERBEGIN);
   }
 
@@ -140,6 +135,7 @@ export default class FilmListPresenter extends RootPresenter {
     }
 
     this._showMoreButton = new ShowMoreButton();
+
     render(this._filmListComponent.getElement(), this._showMoreButton.getElement(), RenderPosition.BEFOREEND);
 
     this._showMoreButton.setShowMoreButtonClickHandler(this._onLoadMoreButtonClick.bind(this));
