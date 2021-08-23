@@ -1,4 +1,5 @@
 import { EmojiMap } from '../const';
+import { formatDuration, formatReleaseDate, filmDurationCovert } from '../utils/date';
 import Component from './component';
 
 const createGenreListTemplate = (genre) => (
@@ -7,7 +8,7 @@ const createGenreListTemplate = (genre) => (
   </td>`
 );
 
-const cretateCommentTemplate = ({ author, comment, date, emotion }) => (
+const cretateCommentTemplate = ({ author, comment, date, emotion }) =>(
   `<li class="film-details__comment">
     <span class="film-details__comment-emoji">
       <img src="${EmojiMap[emotion]}" width="55" height="55" alt="emoji-smile">
@@ -16,7 +17,7 @@ const cretateCommentTemplate = ({ author, comment, date, emotion }) => (
       <p class="film-details__comment-text">${ comment }</p>
       <p class="film-details__comment-info">
         <span class="film-details__comment-author">${ author }</span>
-        <span class="film-details__comment-day">${ date }</span>
+        <span class="film-details__comment-day">${ formatDuration(date) }</span>
         <button class="film-details__comment-delete">Delete</button>
       </p>
     </div>
@@ -85,11 +86,11 @@ const createFilmDetailsTemplate = ({ comments, info }) => {
             </tr>
             <tr class="film-details__row">
               <td class="film-details__term">Release Date</td>
-              <td class="film-details__cell">${date}</td>
+              <td class="film-details__cell">${formatReleaseDate(date)}</td>
             </tr>
             <tr class="film-details__row">
               <td class="film-details__term">Runtime</td>
-              <td class="film-details__cell">${runtime}</td>
+              <td class="film-details__cell">${filmDurationCovert(runtime)}</td>
             </tr>
             <tr class="film-details__row">
               <td class="film-details__term">Country</td>

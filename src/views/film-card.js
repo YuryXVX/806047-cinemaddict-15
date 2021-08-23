@@ -1,4 +1,5 @@
 import { PREFIX_CLASS_BUTTON } from '../const';
+import { formatReleaseDate, filmDurationCovert } from '../utils/date';
 import { getActiveClassButton } from '../utils/helpers';
 import Component from './component';
 
@@ -10,7 +11,7 @@ const createFilmCardTemplate = ({ comments, filmDetails, info }) => {
   const isAlreadyWatchedButton = getActiveClassButton(history);
   const isActiveFavoriteButton = getActiveClassButton(favorite);
 
-  const [,,year] = date.split(' ');
+  const [,,year] = formatReleaseDate(date).split(' ');
 
   return (
     `<article class="film-card">
@@ -18,7 +19,7 @@ const createFilmCardTemplate = ({ comments, filmDetails, info }) => {
         <p class="film-card__rating">${totalRating}</p>
         <p class="film-card__info">
           <span class="film-card__year">${ year }</span>
-          <span class="film-card__duration">${ runtime }</span>
+          <span class="film-card__duration">${ filmDurationCovert(runtime) }</span>
           <span class="film-card__genre">${genre.join(' ')}</span>
         </p>
         <img src="${poster}" alt="" class="film-card__poster">
