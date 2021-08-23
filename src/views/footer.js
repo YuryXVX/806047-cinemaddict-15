@@ -6,7 +6,7 @@ const createFooterTemplate = (filmCount) => (
   </section>`
 );
 
-export default class Footer extends Component {
+export default class FooterView extends Component {
   constructor(filmCount) {
     super();
     this._filmCount = filmCount;

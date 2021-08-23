@@ -26,29 +26,57 @@ const createFilterButtonListTemplate = (active, filters) => (
   </nav>`
 );
 
-export default class Filters extends Component {
+export default class FiltersView extends Component {
   constructor(active, filters) {
     super();
 
     this._active = active;
     this._filters = filters;
+
+    this.handleChangeFilter = null;
+
+    this._handleChangeFilter = this._handleChangeFilter.bind(this);
+  }
+
+  get filters() {
+    return this._filters;
+  }
+
+  set filters(newValue) {
+    this._filters = newValue;
+
+    this.updateComponent();
+  }
+
+  set activeFilter(newValue) {
+    this._active = newValue;
+
+    this.updateComponent();
+  }
+
+  get activeFilter() {
+    return this._active;
+  }
+
+  _handleChangeFilter(evt) {
+    evt.preventDefault();
+
+    const button = evt.target.closest('[data-filter]');
+    if(button) {
+      const { dataset: { filter } } = button;
+      this.handleChangeFilter(filter);
+    }
   }
 
   getTemplate() {
     return createFilterButtonListTemplate(this._active, this._filters);
   }
 
-  setClickButtonFlilter(handler) {
-    this.getElement()
-      .querySelector('.main-navigation__items')
-      .addEventListener('click', (evt) => {
-        evt.preventDefault();
+  _addEventListeners() {
+    this.element.querySelector('.main-navigation__items').addEventListener('click', this._handleChangeFilter);
+  }
 
-        const button = evt.target.closest('[data-filter]');
-        if(button) {
-          const { dataset: { filter } } = button;
-          handler(filter);
-        }
-      });
+  _removeEventListeners() {
+    this.element.querySelector('.main-navigation__items').addEventListener('click', this._handleChangeFilter);
   }
 }

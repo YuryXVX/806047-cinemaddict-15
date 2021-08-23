@@ -101,11 +101,13 @@ export default class FilmsStore {
     listeners.forEach((listner) => listner(this));
   }
 
-  updateFilters(films) {
+
+  updateFilters() {
     const filters = Object.keys(FilterType).map((filter) => ({
       name: FilterType[filter],
-      count: getFilmsByFilter(films, filter).length,
-      active: FilterType[filter] === this._acitveFilter,
+      count: filter === this._acitveFilter
+        ? getFilmsByFilter(this._state.films, this._acitveFilter).length
+        : getFilmsByFilter(this._state.films, filter).length,
     }));
 
     return filters;

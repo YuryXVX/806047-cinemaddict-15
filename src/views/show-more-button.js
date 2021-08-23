@@ -2,7 +2,7 @@ import Component from './component';
 
 const showMoreButtonTemplate = '<button class="films-list__show-more">Show more</button>';
 
-export default class ShowMoreButton extends Component {
+export default class ShowMoreButtonView extends Component {
   getTemplate() {
     return showMoreButtonTemplate;
   }

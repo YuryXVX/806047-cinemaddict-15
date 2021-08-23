@@ -33,7 +33,7 @@ const createFilmCardTemplate = ({ comments, filmDetails, info }) => {
   );
 };
 
-export default class FilmCard extends Component {
+export default class FilmCardView extends Component {
   constructor(data) {
     super();
     this._data = data;

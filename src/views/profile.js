@@ -7,10 +7,20 @@ const createProfileTemplate = (raiting) => (
   </section>`
 );
 
-export default class Profile extends Component {
+export default class ProfileView extends Component {
   constructor(raiting) {
     super();
     this._raiting = raiting;
+  }
+
+  get raiting() {
+    return this._raiting;
+  }
+
+  set raiting(newValue) {
+    this._raiting = newValue;
+
+    this.updateComponent();
   }
 
   getTemplate() {

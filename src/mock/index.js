@@ -6,7 +6,7 @@ export const getFilmsByFilter = (films, filter) => {
     return films;
   }
 
-  return films.filter(({ filmDetails }) => filmDetails[filter.toLowerCase()]);
+  return films.slice().filter(({ filmDetails }) => filmDetails[filter.toLowerCase()]);
 };
 
 export const getUserRaiting = (filmsCount) => {
