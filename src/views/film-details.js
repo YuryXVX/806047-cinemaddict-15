@@ -153,7 +153,7 @@ export default class FilmDetails extends Component {
       .addEventListener('click', this._handler);
   }
 
-  _removeEventListener() {
+  _removeEventListeners() {
     this.getElement()
       .querySelector('.film-details__close-btn')
       .removeEventListener('click', this._handler);

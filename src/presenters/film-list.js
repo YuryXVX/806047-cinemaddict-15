@@ -39,12 +39,9 @@ export default class FilmListPresenter extends RootPresenter {
     this._showFilmsCount = FILMS_COUNT_PER_STEP;
   }
 
-  _rerender({ films }) {
-    if(films.length) {
-      removeElement(this._noFilmsMessageComponent);
-    }
-
+  _rerender({ activeSortButton }) {
     this._updateFilms(FILMS_COUNT_PER_STEP);
+    this._sortComponent.activeButton = activeSortButton;
   }
 
   render(container) {

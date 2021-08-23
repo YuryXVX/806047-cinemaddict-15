@@ -1,3 +1,4 @@
+import { SortType } from '../const';
 import { render, RenderPosition } from '../utils/render';
 
 // views
@@ -50,6 +51,7 @@ export default class App extends RootPresenter {
 
   _handleChangeFilter(filter) {
     this._model.activeFilter = filter;
+    this._model.activeSortButton = SortType.DEFAULT;
   }
 
   render() {

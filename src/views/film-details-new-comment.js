@@ -137,7 +137,7 @@ export default class FilmDetailsNewCommentView extends Component {
     this.element.addEventListener('submit-comment', this._submitComment);
   }
 
-  _removeEventListener() {
+  _removeEventListeners() {
     const { emojiList, textarea } = this._selectedElements();
 
     window.removeEventListener('keydown', this._handleWindowKeyDown);

@@ -40,7 +40,7 @@ export default class SortView extends Component {
     this.element.addEventListener('click', this._handleChangeSortItem);
   }
 
-  _removeEventListener() {
+  _removeEventListeners() {
     this.element.removeEventListener('click', this._handleChangeSortItem);
   }
 

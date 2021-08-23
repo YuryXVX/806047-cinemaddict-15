@@ -36,7 +36,7 @@ export default class Component {
   }
 
   destroyElement() {
-    this._removeEventListener();
+    this._removeEventListeners();
     this._element.remove();
     this._element = null;
   }
@@ -44,7 +44,7 @@ export default class Component {
   _rerenderElement() {
     const oldElement = this._element;
 
-    this._removeEventListener();
+    this._removeEventListeners();
     this._removeElement();
 
     oldElement.replaceWith(this.element);
@@ -63,5 +63,5 @@ export default class Component {
 
   _addEventListeners() {}
 
-  _removeEventListener() {}
+  _removeEventListeners() {}
 }

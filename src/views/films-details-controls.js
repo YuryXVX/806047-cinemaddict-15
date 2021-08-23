@@ -43,7 +43,7 @@ export default class FilmDetailsControlsView extends Component {
     this.element.querySelector(`${PREFIX_CLASS_BUTTON}--favorite`).addEventListener('click', () => this.handleFavoriteListButton(this._data));
   }
 
-  _removeEventListener() {
+  _removeEventListeners() {
     this.element.querySelector(`${PREFIX_CLASS_BUTTON}--add-to-watchlist`).removeEventListener('click', () => this.handleWatchListButton(this._data));
     this.element.querySelector(`${PREFIX_CLASS_BUTTON}--mark-as-watched`).addEventListener('click', () => this.handleHistoryListButton(this._data));
     this.element.querySelector(`${PREFIX_CLASS_BUTTON}--favorite`).addEventListener('clicl', () => this.handleFavoriteListButton(this._data));

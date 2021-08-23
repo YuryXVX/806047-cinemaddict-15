@@ -76,7 +76,7 @@ export default class FiltersView extends Component {
     this.element.querySelector('.main-navigation__items').addEventListener('click', this._handleChangeFilter);
   }
 
-  _removeEventListener() {
+  _removeEventListeners() {
     this.element.querySelector('.main-navigation__items').addEventListener('click', this._handleChangeFilter);
   }
 }
