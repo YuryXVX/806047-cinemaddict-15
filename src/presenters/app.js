@@ -57,7 +57,7 @@ export default class App extends RootPresenter {
   render() {
     this._renderHeaderComponent();
     this._renderFilterComponent(this._model.activeFilter, this._model.filters);
-    this._filmListPresenter.render(this._mainContainer);
+    this._filmListPresenter.render({ container: this._mainContainer, filters: this._filterComponent });
     this._renderFooterComponent();
   }
 

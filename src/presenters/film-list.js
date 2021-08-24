@@ -1,4 +1,4 @@
-import { FILMS_COUNT_PER_STEP, ModeView } from '../const';
+import { FILMS_COUNT_PER_STEP, ModeView, SortType } from '../const';
 import { render, RenderPosition, removeElement } from '../utils/render';
 import { getFilmPresenters } from './film';
 import { RootPresenter } from './root-presenter';
@@ -17,6 +17,7 @@ export default class FilmListPresenter extends RootPresenter {
     super(store);
 
     this._container = null;
+    this._filterComponentRef = null;
 
     this._containerComponent = new Container({classList: ['films']});
     this._filmListComponent = new Container({ title: 'All movies. Upcoming', classList: ['films-list'] });
@@ -39,13 +40,30 @@ export default class FilmListPresenter extends RootPresenter {
     this._showFilmsCount = FILMS_COUNT_PER_STEP;
   }
 
-  _rerender({ activeSortButton }) {
+  _rerender({ films }) {
+    this._updateViewOnChangeFilters({ films });
     this._updateFilms(FILMS_COUNT_PER_STEP);
-    this._sortComponent.activeButton = activeSortButton;
   }
 
-  render(container) {
+  _updateViewOnChangeFilters({ films }) {
+    if(films.length) {
+      if(this._noFilmsMessageComponent) {
+        removeElement(this._noFilmsMessageComponent);
+        render(this._filterComponentRef.getElement(), this._sortComponent.getElement(), RenderPosition.AFTER);
+      }
+
+      this._sortComponent.activeButton = SortType.DEFAULT;
+    }
+
+    if(!films.length) {
+      removeElement(this._sortComponent);
+      this._renderNoFilmsMessage();
+    }
+  }
+
+  render({ container, filters }) {
     this._container = container;
+    this._filterComponentRef = filters;
 
     this._renderSortComponent(this._model.activeSortButton);
     this._renderAllFilms();
@@ -73,6 +91,11 @@ export default class FilmListPresenter extends RootPresenter {
     render(this._containerComponent.getElement(), this._filmListComponent.getElement(), RenderPosition.BEFOREEND);
     render(this._filmListComponent.getElement(), this._filmListContainerComponent.getElement(), RenderPosition.BEFOREEND);
 
+    if(!this._model.films.length) {
+      removeElement(this._sortComponent);
+      this._renderNoFilmsMessage();
+    }
+
     this._renderFilms(this._model.films.slice(0, this._showFilmsCount));
   }
 
@@ -88,11 +111,6 @@ export default class FilmListPresenter extends RootPresenter {
   }
 
   _renderFilms(films) {
-    if(!films.length) {
-      this._renderNoFilmsMessage();
-      removeElement(this._sortComponent);
-    }
-
     const container = this._filmListContainerComponent.getElement();
 
     const filmsPresenters = getFilmPresenters(container, films, this._handleDataChange, this._handleRenderFilmDetailsPopup);
@@ -113,9 +131,19 @@ export default class FilmListPresenter extends RootPresenter {
     this._updateFilms(this._showFilmsCount);
     this._handleRatingChange(this._model.films);
     this._handleFiltersCountChange(this._model.films);
+
+    if(!this._model.films.length) {
+      this._renderNoFilmsMessage();
+    }
   }
 
   _renderNoFilmsMessage() {
+    if(this._noFilmsMessageComponent) {
+      removeElement(this._noFilmsMessageComponent);
+    }
+
+    removeElement(this._sortComponent);
+
     const container = this._filmListComponent.getElement();
 
     this._noFilmsMessageComponent = new NoFilmsMessage();
