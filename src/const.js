@@ -39,7 +39,7 @@ export const ModeView = freeze({
 
 export const FILMS_COUNT_PER_STEP = 5;
 
-export const FILMS_COUNT = 11;
+export const FILMS_COUNT = 15;
 
 export const PREFIX_CLASS_BUTTON = '.film-card__controls-item';
 
