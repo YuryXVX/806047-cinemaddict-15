@@ -1,12 +1,9 @@
 import {
-  filmDurationCovert,
-  getReleaseDate,
-  getHumanizedCommentDate,
   getRandomIntInclusive,
   getRandomDate,
   getRandomRaiting,
   getRandomFlag
-} from '../utils/helpers';
+} from '../utils/random';
 
 const filmDescriptions = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras aliquet varius magna, non porta ligula feugiat eget. Fusce tristique felis at fermentum pharetra. Aliquam id orci ut lectus varius viverra. Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante. Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum. Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui. Sed sed nisi sed augue convallis suscipit in sed felis. Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus.'.split('.');
 const filmTitles = ['The Dance of Life', 'Sagebrush Trail', 'The Man with the Golden Arm', 'Santa Claus Conquers the Martians', 'Popeye the Sailor Meets Sindbad the Sailor'];
@@ -23,7 +20,7 @@ const getComment = (_, i) => ({
   id: i + 1,
   author: directors[getRandomIntInclusive(0, directors.length - 1)],
   comment: filmDescriptions[getRandomIntInclusive(0, filmDescriptions.length - 1)],
-  date: getHumanizedCommentDate(getRandomDate(new Date(2012, 0, 1), new Date())),
+  date: getRandomDate(new Date(2012, 0, 1), new Date()),
   emotion: emotions[getRandomIntInclusive(0, emotions.length - 1)],
 });
 
@@ -41,10 +38,10 @@ const getFilm = (_, index) => ({
     writers: [writers[getRandomIntInclusive(0, writers.length - 1)], writers[getRandomIntInclusive(0, writers.length - 1)]],
     actors: [actors[getRandomIntInclusive(0, actors.length - 1)], actors[getRandomIntInclusive(0, actors.length - 1)]],
     release: {
-      date: getReleaseDate(getRandomDate(new Date(2012, 0, 1), new Date())),
+      date: getRandomDate(new Date(2012, 0, 1), new Date()),
       releaseCountry: 'Finland',
     },
-    runtime: filmDurationCovert(getRandomIntInclusive(0, 300)),
+    runtime: getRandomIntInclusive(0, 300),
     genre: genre,
     description: filmDescriptions[getRandomIntInclusive(0, filmDescriptions.length - 1)],
   },
