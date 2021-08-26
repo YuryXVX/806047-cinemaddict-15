@@ -46,6 +46,7 @@ export default class FilmDetailsNewCommentView extends Component {
     this._handleCommentTextField = this._handleCommentTextField.bind(this);
     this._handleWindowKeyDown = this._handleWindowKeyDown.bind(this);
 
+    this.handleCreateComment = null;
     this._submitComment = this._submitComment.bind(this);
 
     this._refToEmojiListElement = null;
@@ -63,8 +64,8 @@ export default class FilmDetailsNewCommentView extends Component {
 
   get comment() {
     return {
-      emoji: this._emoji,
-      text: this._text,
+      emotion: this._emoji,
+      comment: this._text,
     };
   }
 
@@ -103,7 +104,9 @@ export default class FilmDetailsNewCommentView extends Component {
     }
   }
 
-  _submitComment() {}
+  _submitComment() {
+    this.handleCreateComment(this.comment);
+  }
 
 
   _handleCommentTextField() {

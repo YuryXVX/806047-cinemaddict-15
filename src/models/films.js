@@ -1,5 +1,6 @@
 import { FilterType, SortType } from '../const';
 import { getFilmsByFilter, getUserRaiting } from '../mock';
+import { getRandomRaiting } from '../utils/random';
 
 const getSortFilms = (films ,sortType = SortType.DEFAULT) => {
   switch(sortType) {
@@ -27,7 +28,7 @@ export default class FilmsStore {
 
     this._listeners = new Set();
 
-    this._listersFiltes = new Set();
+    this._commentListeners = new Set();
   }
 
   get films() {
@@ -57,7 +58,7 @@ export default class FilmsStore {
       return;
     }
 
-    this._callListeners(this._listersFiltes);
+    this._callListeners(this._listeners);
 
     this._state.films = [].concat(this._state.films.slice(0, index), newData, this._state.films.slice(index + 1));
 
@@ -113,6 +114,37 @@ export default class FilmsStore {
     return filters;
   }
 
+  _updateFilmList(index, newItem) {
+    this._state.films = [].concat(this._state.films.slice(0, index), newItem, this._state.films.slice(index + 1));
+  }
+
+  deleteComments(filmId, commentId) {
+    const index = this._state.films.findIndex((film) => film.id === filmId);
+    const commentIndex = this._state.films[index].comments.findIndex((id) => id === commentId);
+    this._state.films[index].comments.splice(commentIndex, 1);
+
+    this._updateFilmList(index, this._state.films[index]);
+
+    this._callListeners(this._commentListeners);
+    this._callListeners(this._listeners);
+  }
+
+
+  createComment(filmId, comment) {
+    // пока наивный моковоый id
+    const mockIds = Math.floor(getRandomRaiting(300));
+
+    const index = this._state.films.findIndex((film) => film.id === filmId);
+    this._state.films[index].comments.push(mockIds);
+
+    this._state.commentsList.push({...comment, id: mockIds, author: 'Awesome Random Name'});
+
+    this._updateFilmList(index, this._state.films[index]);
+
+    this._callListeners(this._commentListeners);
+    this._callListeners(this._listeners);
+  }
+
   addDataChangeListener(listener) {
     this._listeners.add(listener);
   }
@@ -121,12 +153,12 @@ export default class FilmsStore {
     this._listeners.delete(listener);
   }
 
-  addFilterChangeListener(listener) {
-    this._listersFiltes.add(listener);
+  addCommentsChangeListener(listener) {
+    this._commentListeners.add(listener);
   }
 
-  removeFilterChangeListener(listener) {
-    this._listersFiltes.delete(listener);
+  removeCommentsChangeListener(listener) {
+    this._commentListeners.delete(listener);
   }
 }
 
