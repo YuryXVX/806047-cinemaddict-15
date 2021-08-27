@@ -11,9 +11,10 @@ import FilmDetailsControls from '../views/films-details-controls';
 import FilmDetailsNewCommentView from '../views/film-details-new-comment';
 import FilmsDetailsComment from '../views/film-details-comment';
 import FilmDetailsCommentList from '../views/film-details-list';
+import { getRandomRaiting } from '../utils/random';
 
 export default class FilmDetailsPresenter extends RootPresenter {
-  constructor(store, onDataChange) {
+  constructor(store, handleDataChange) {
     super(store);
     this._filmDetailsView = null;
     this._filmDetailsControls = null;
@@ -26,10 +27,10 @@ export default class FilmDetailsPresenter extends RootPresenter {
     this._data = null;
     this._newData = null;
 
-    this._onDataChange = onDataChange;
+    this._handleDataChange = handleDataChange;
 
     this._handleClosePopupKeyDown = this._handleClosePopupKeyDown.bind(this);
-    this._onClosePopup = this._onClosePopup.bind(this);
+    this._handleClosePopup = this._handleClosePopup.bind(this);
 
     this._handleWatchListButton = this._handleWatchListButton.bind(this);
     this._handleHistoryListButton = this._hadleHistoryListButton.bind(this);
@@ -59,12 +60,18 @@ export default class FilmDetailsPresenter extends RootPresenter {
     return this._id;
   }
 
-  _onClosePopup() {
+  _handleClosePopup() {
     this._removePopup();
   }
 
   _handleCreateComment(comment) {
-    this._model.createComment(this.modalId, comment);
+    const newComment = {
+      ...comment,
+      id: Math.floor(getRandomRaiting(300)),
+      author: 'Awesome Random Name',
+    };
+
+    this._model.createComment(this.modalId, newComment);
   }
 
   _removePopup() {
@@ -105,21 +112,21 @@ export default class FilmDetailsPresenter extends RootPresenter {
     const newData = deepClone(this._data);
     newData.filmDetails.watchlist = !newData.filmDetails.watchlist;
 
-    this._onDataChange(this, data, newData, ModeView.MODAL);
+    this._handleDataChange(this, data, newData, ModeView.MODAL);
   }
 
   _handleFavoriteListButton(data) {
     const newData = deepClone(this._data);
     newData.filmDetails.favorite = !newData.filmDetails.favorite;
 
-    this._onDataChange(this, data, newData, ModeView.MODAL);
+    this._handleDataChange(this, data, newData, ModeView.MODAL);
   }
 
   _hadleHistoryListButton(data) {
     const newData = deepClone(this._data);
     newData.filmDetails.history = !newData.filmDetails.history;
 
-    this._onDataChange(this, data, newData, ModeView.MODAL);
+    this._handleDataChange(this, data, newData, ModeView.MODAL);
   }
 
   _handleDeleteComment(data) {
@@ -139,6 +146,7 @@ export default class FilmDetailsPresenter extends RootPresenter {
   _renderCommnents(comments) {
     this.__filmDetailsCommnentViews = comments.map((comment) => {
       const commentView = new FilmsDetailsComment(comment, this._handleDeleteComment);
+      commentView.handleDeleteComment = this._handleDeleteComment;
       render(this._filmDetailsCommnentListView.element, commentView.getElement(), RenderPosition.BEFOREEND);
       return commentView;
     });
@@ -153,7 +161,7 @@ export default class FilmDetailsPresenter extends RootPresenter {
       comments: this._model.commentsList.filter((comment) => data.comments.includes(comment.id)),
     };
 
-    this._filmDetailsView = new FilmDetails(model, this._onClosePopup);
+    this._filmDetailsView = new FilmDetails(model, this._handleClosePopup);
     this._filmDetailsControls = new FilmDetailsControls(data);
     this._filmDetailsNewCommentView = new FilmDetailsNewCommentView();
 

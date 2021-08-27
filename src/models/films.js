@@ -1,6 +1,5 @@
 import { FilterType, SortType } from '../const';
 import { getFilmsByFilter, getUserRaiting } from '../mock';
-import { getRandomRaiting } from '../utils/random';
 
 const getSortFilms = (films ,sortType = SortType.DEFAULT) => {
   switch(sortType) {
@@ -26,8 +25,8 @@ export default class FilmsStore {
 
     this._acitveFilter = 'ALL';
 
+    // subscribers sets
     this._listeners = new Set();
-
     this._commentListeners = new Set();
   }
 
@@ -52,7 +51,7 @@ export default class FilmsStore {
   }
 
   updateFilm(oldData, newData) {
-    const index = this._state.films.findIndex((film) => film.id === oldData.id);
+    const index = this._getFilmIndexById(oldData.id);
 
     if(index === -1) {
       return;
@@ -65,9 +64,7 @@ export default class FilmsStore {
     return new Promise((resolve) => resolve(newData));
   }
 
-  get userRating() {
-    return this._state.userRating;
-  }
+  get userRating() { return this._state.userRating; }
 
   updateRating(value) {
     this._state.userRating = getUserRaiting(getFilmsByFilter(value, FilterType.HISTORY).length);
@@ -75,9 +72,7 @@ export default class FilmsStore {
 
   get filters() { return this._state.filters; }
 
-  set filters(value) {
-    this._state.filters = value;
-  }
+  set filters(value) { this._state.filters = value; }
 
   get activeFilter() { return this._acitveFilter; }
 
@@ -86,22 +81,19 @@ export default class FilmsStore {
     this._callListeners(this._listeners);
   }
 
-  get topRated() {
-    return this._state.topRated;
-  }
+  get topRated() { return this._state.topRated; }
 
-  get commentsList() {
-    return this._state.commentsList;
-  }
+  get commentsList() { return this._state.commentsList; }
 
-  get mostCommented() {
-    return this._state.mostCommented;
-  }
+  get mostCommented() { return this._state.mostCommented; }
 
   _callListeners(listeners) {
     listeners.forEach((listner) => listner(this));
   }
 
+  _getFilmIndexById(filmId) {
+    return this._state.films.findIndex((film) => film.id === filmId);
+  }
 
   updateFilters() {
     const filters = Object.keys(FilterType).map((filter) => ({
@@ -119,7 +111,7 @@ export default class FilmsStore {
   }
 
   deleteComments(filmId, commentId) {
-    const index = this._state.films.findIndex((film) => film.id === filmId);
+    const index = this._getFilmIndexById(filmId);
     const commentIndex = this._state.films[index].comments.findIndex((id) => id === commentId);
     this._state.films[index].comments.splice(commentIndex, 1);
 
@@ -129,15 +121,11 @@ export default class FilmsStore {
     this._callListeners(this._listeners);
   }
 
-
   createComment(filmId, comment) {
-    // пока наивный моковоый id
-    const mockIds = Math.floor(getRandomRaiting(300));
+    const index = this._getFilmIndexById(filmId);
+    this._state.films[index].comments.push(comment.id);
 
-    const index = this._state.films.findIndex((film) => film.id === filmId);
-    this._state.films[index].comments.push(mockIds);
-
-    this._state.commentsList.push({...comment, id: mockIds, author: 'Awesome Random Name'});
+    this._state.commentsList.push(comment);
 
     this._updateFilmList(index, this._state.films[index]);
 
@@ -162,3 +150,5 @@ export default class FilmsStore {
   }
 }
 
+
+// const index = this._state.films.findIndex((film) => film.id === filmId)

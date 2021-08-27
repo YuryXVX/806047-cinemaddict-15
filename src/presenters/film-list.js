@@ -19,12 +19,11 @@ export default class FilmListPresenter extends RootPresenter {
     this._container = null;
     this._filterComponentRef = null;
 
-    this._containerComponent = new Container({classList: ['films']});
-    this._filmListComponent = new Container({ title: 'All movies. Upcoming', classList: ['films-list'] });
-    this._filmListContainerComponent = new Container({ tag: 'div', classList: ['films-list__container'] });
-    this._sortComponent = null;
-    this._noFilmsMessageComponent = null;
-
+    this._containerView = new Container({classList: ['films']});
+    this._filmListView = new Container({ title: 'All movies. Upcoming', classList: ['films-list'] });
+    this._filmListContainerView = new Container({ tag: 'div', classList: ['films-list__container'] });
+    this._sortView = null;
+    this._noFilmsMessageView = null;
 
     this._filmsPresenters = [];
     this._filmDetailsPresenter = null;
@@ -40,23 +39,23 @@ export default class FilmListPresenter extends RootPresenter {
     this._showFilmsCount = FILMS_COUNT_PER_STEP;
   }
 
-  _rerender({ films }) {
+  rerender({ films }) {
     this._updateViewOnChangeFilters({ films });
     this._updateFilms(FILMS_COUNT_PER_STEP);
   }
 
   _updateViewOnChangeFilters({ films }) {
     if(films.length) {
-      if(this._noFilmsMessageComponent) {
-        removeElement(this._noFilmsMessageComponent);
-        render(this._filterComponentRef.getElement(), this._sortComponent.getElement(), RenderPosition.AFTER);
+      if(this._noFilmsMessageView) {
+        removeElement(this._noFilmsMessageView);
+        render(this._filterComponentRef.getElement(), this._sortView.getElement(), RenderPosition.AFTER);
       }
 
-      this._sortComponent.activeButton = SortType.DEFAULT;
+      this._sortView.activeButton = SortType.DEFAULT;
     }
 
     if(!films.length) {
-      removeElement(this._sortComponent);
+      removeElement(this._sortView);
       this._renderNoFilmsMessage();
     }
   }
@@ -76,23 +75,23 @@ export default class FilmListPresenter extends RootPresenter {
     }
 
     this._model.activeSortButton = activeSort;
-    this._sortComponent.activeButton = this._model.activeSortButton;
+    this._sortView.activeButton = this._model.activeSortButton;
   }
 
   _renderSortComponent() {
-    this._sortComponent = new Sort();
-    this._sortComponent.handleChangeSort = this._handleChangeSortData;
+    this._sortView = new Sort();
+    this._sortView.handleChangeSort = this._handleChangeSortData;
 
-    render(this._container, this._sortComponent.getElement(), RenderPosition.BEFOREEND);
+    render(this._container, this._sortView.getElement(), RenderPosition.BEFOREEND);
   }
 
   _renderAllFilms() {
-    render(this._container, this._containerComponent.getElement(), RenderPosition.BEFOREEND);
-    render(this._containerComponent.getElement(), this._filmListComponent.getElement(), RenderPosition.BEFOREEND);
-    render(this._filmListComponent.getElement(), this._filmListContainerComponent.getElement(), RenderPosition.BEFOREEND);
+    render(this._container, this._containerView.getElement(), RenderPosition.BEFOREEND);
+    render(this._containerView.getElement(), this._filmListView.getElement(), RenderPosition.BEFOREEND);
+    render(this._filmListView.getElement(), this._filmListContainerView.getElement(), RenderPosition.BEFOREEND);
 
     if(!this._model.films.length) {
-      removeElement(this._sortComponent);
+      removeElement(this._sortView);
       this._renderNoFilmsMessage();
     }
 
@@ -111,7 +110,7 @@ export default class FilmListPresenter extends RootPresenter {
   }
 
   _renderFilms(films) {
-    const container = this._filmListContainerComponent.getElement();
+    const container = this._filmListContainerView.getElement();
 
     const filmsPresenters = getFilmPresenters(container, films, this._handleDataChange, this._handleRenderFilmDetailsPopup);
 
@@ -138,16 +137,16 @@ export default class FilmListPresenter extends RootPresenter {
   }
 
   _renderNoFilmsMessage() {
-    if(this._noFilmsMessageComponent) {
-      removeElement(this._noFilmsMessageComponent);
+    if(this._noFilmsMessageView) {
+      removeElement(this._noFilmsMessageView);
     }
 
-    removeElement(this._sortComponent);
+    removeElement(this._sortView);
 
-    const container = this._filmListComponent.getElement();
+    const container = this._filmListView.getElement();
 
-    this._noFilmsMessageComponent = new NoFilmsMessage();
-    render(container, this._noFilmsMessageComponent.getElement(), RenderPosition.AFTERBEGIN);
+    this._noFilmsMessageView = new NoFilmsMessage();
+    render(container, this._noFilmsMessageView.getElement(), RenderPosition.AFTERBEGIN);
   }
 
   _renderLoadMoreButton() {
@@ -161,7 +160,7 @@ export default class FilmListPresenter extends RootPresenter {
 
     this._showMoreButton = new ShowMoreButton();
 
-    render(this._filmListComponent.getElement(), this._showMoreButton.getElement(), RenderPosition.BEFOREEND);
+    render(this._filmListView.getElement(), this._showMoreButton.getElement(), RenderPosition.BEFOREEND);
 
     this._showMoreButton.setShowMoreButtonClickHandler(this._onLoadMoreButtonClick.bind(this));
   }
@@ -199,7 +198,10 @@ export default class FilmListPresenter extends RootPresenter {
   }
 
   destroy() {
-    removeElement(this._containerComponent);
-    removeElement(this._sortComponent);
+    this._showFilmsCount = FILMS_COUNT_PER_STEP;
+
+    this._removeFilms();
+    removeElement(this._containerView);
+    removeElement(this._sortView);
   }
 }

@@ -2,10 +2,9 @@ export class RootPresenter {
   constructor(store) {
     this._model = store;
 
-    this._model.addDataChangeListener((data) => {
-      this._rerender(data);
-    });
+    this._rerender = this.rerender.bind(this);
+    this._model.addDataChangeListener(this._rerender);
   }
 
-  _rerender() {}
+  rerender() {}
 }
