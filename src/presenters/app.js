@@ -8,6 +8,7 @@ import Profile from '../views/profile';
 
 // presenters
 import FilmList from './film-list';
+import Statistic from './statistics';
 
 // constants
 import { RootPresenter } from './root-presenter';
@@ -31,6 +32,7 @@ export default class App extends RootPresenter {
     this._handleDestroyFilmListPresentor = this._handleDestroyFilmListPresentor.bind(this);
 
     this._filmListPresenter = new FilmList(this._model, this._handleRaitingChange, this._handleFiltersCountChange);
+    this._statisticsPresenter = new Statistic();
   }
 
   rerender({ activeFilter }) {
@@ -48,6 +50,8 @@ export default class App extends RootPresenter {
 
   _handleChangeFilter(filter) {
     if(this._isStatisticsViewRender) {
+      this._statisticsPresenter.destroy();
+
       this._renderFilmListPresentor();
     }
     this._model.activeFilter = filter;
@@ -59,6 +63,8 @@ export default class App extends RootPresenter {
     this._filterView.activeFilter = 'STATISTIC';
 
     this._filmListPresenter.destroy();
+
+    this._statisticsPresenter.render({ container: this._mainContainer, data: this._model });
   }
 
   _renderFilmListPresentor() {

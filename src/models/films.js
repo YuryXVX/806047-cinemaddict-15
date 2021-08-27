@@ -57,7 +57,7 @@ export default class FilmsStore {
       return;
     }
 
-    this._callListeners(this._listeners);
+    // this._callListeners(this._listeners);
 
     this._state.films = [].concat(this._state.films.slice(0, index), newData, this._state.films.slice(index + 1));
 
