@@ -4,7 +4,7 @@ import Component from './component';
 const createNewCommentTemplate = (emoji) => (
   `<div class="film-details__new-comment">
     <div class="film-details__add-emoji-label">
-      <img src="images/emoji/${emoji || 'smile'}.png" width="55" height="55" alt="emoji-smile">
+      ${emoji ? `<img src="images/emoji/${emoji}.png" width="55" height="55" alt="emoji-smile">`: ''}
     </div>
 
     <label class="film-details__comment-label">
@@ -46,6 +46,7 @@ export default class FilmDetailsNewCommentView extends Component {
     this._handleCommentTextField = this._handleCommentTextField.bind(this);
     this._handleWindowKeyDown = this._handleWindowKeyDown.bind(this);
 
+    this.handleCreateComment = null;
     this._submitComment = this._submitComment.bind(this);
 
     this._refToEmojiListElement = null;
@@ -63,8 +64,8 @@ export default class FilmDetailsNewCommentView extends Component {
 
   get comment() {
     return {
-      emoji: this._emoji,
-      text: this._text,
+      emotion: this._emoji,
+      comment: this._text,
     };
   }
 
@@ -86,7 +87,6 @@ export default class FilmDetailsNewCommentView extends Component {
 
   updateComponent() {
     super.updateComponent();
-
     this._saveDataWhenUpdatingComponent();
   }
 
@@ -103,7 +103,13 @@ export default class FilmDetailsNewCommentView extends Component {
     }
   }
 
-  _submitComment() {}
+  _submitComment() {
+    if(!this._text || !this._emoji) {
+      return;
+    }
+
+    this.handleCreateComment(this.comment);
+  }
 
 
   _handleCommentTextField() {

@@ -25,9 +25,9 @@ export default class FilmsStore {
 
     this._acitveFilter = 'ALL';
 
+    // subscribers sets
     this._listeners = new Set();
-
-    this._listersFiltes = new Set();
+    this._commentListeners = new Set();
   }
 
   get films() {
@@ -51,22 +51,18 @@ export default class FilmsStore {
   }
 
   updateFilm(oldData, newData) {
-    const index = this._state.films.findIndex((film) => film.id === oldData.id);
+    const index = this._getFilmIndexById(oldData.id);
 
     if(index === -1) {
       return;
     }
-
-    this._callListeners(this._listersFiltes);
 
     this._state.films = [].concat(this._state.films.slice(0, index), newData, this._state.films.slice(index + 1));
 
     return new Promise((resolve) => resolve(newData));
   }
 
-  get userRating() {
-    return this._state.userRating;
-  }
+  get userRating() { return this._state.userRating; }
 
   updateRating(value) {
     this._state.userRating = getUserRaiting(getFilmsByFilter(value, FilterType.HISTORY).length);
@@ -74,9 +70,7 @@ export default class FilmsStore {
 
   get filters() { return this._state.filters; }
 
-  set filters(value) {
-    this._state.filters = value;
-  }
+  set filters(value) { this._state.filters = value; }
 
   get activeFilter() { return this._acitveFilter; }
 
@@ -85,22 +79,19 @@ export default class FilmsStore {
     this._callListeners(this._listeners);
   }
 
-  get topRated() {
-    return this._state.topRated;
-  }
+  get topRated() { return this._state.topRated; }
 
-  get commentsList() {
-    return this._state.commentsList;
-  }
+  get commentsList() { return this._state.commentsList; }
 
-  get mostCommented() {
-    return this._state.mostCommented;
-  }
+  get mostCommented() { return this._state.mostCommented; }
 
   _callListeners(listeners) {
     listeners.forEach((listner) => listner(this));
   }
 
+  _getFilmIndexById(filmId) {
+    return this._state.films.findIndex((film) => film.id === filmId);
+  }
 
   updateFilters() {
     const filters = Object.keys(FilterType).map((filter) => ({
@@ -113,6 +104,33 @@ export default class FilmsStore {
     return filters;
   }
 
+  _updateFilmList(index, newItem) {
+    this._state.films = [].concat(this._state.films.slice(0, index), newItem, this._state.films.slice(index + 1));
+  }
+
+  deleteComment(filmId, commentId) {
+    const index = this._getFilmIndexById(filmId);
+    const commentIndex = this._state.films[index].comments.findIndex((id) => id === commentId);
+    this._state.films[index].comments.splice(commentIndex, 1);
+
+    this._updateFilmList(index, this._state.films[index]);
+
+    this._callListeners(this._commentListeners);
+    this._callListeners(this._listeners);
+  }
+
+  createComment(filmId, comment) {
+    const index = this._getFilmIndexById(filmId);
+    this._state.films[index].comments.push(comment.id);
+
+    this._state.commentsList.push(comment);
+
+    this._updateFilmList(index, this._state.films[index]);
+
+    this._callListeners(this._commentListeners);
+    this._callListeners(this._listeners);
+  }
+
   addDataChangeListener(listener) {
     this._listeners.add(listener);
   }
@@ -121,12 +139,11 @@ export default class FilmsStore {
     this._listeners.delete(listener);
   }
 
-  addFilterChangeListener(listener) {
-    this._listersFiltes.add(listener);
+  addCommentsChangeListener(listener) {
+    this._commentListeners.add(listener);
   }
 
-  removeFilterChangeListener(listener) {
-    this._listersFiltes.delete(listener);
+  removeCommentsChangeListener(listener) {
+    this._commentListeners.delete(listener);
   }
 }
-

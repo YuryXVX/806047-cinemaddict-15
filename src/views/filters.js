@@ -22,7 +22,7 @@ const createFilterButtonListTemplate = (active, filters) => (
     <div class="main-navigation__items">
       ${ filters.map((it) => createFilterButtonTemplate(active, it)).join(' ') }
     </div>
-    <a href="#stats" class="main-navigation__additional">Stats</a>
+    <a href="#stats" class="${active === 'STATISTIC' ? 'main-navigation__additional main-navigation__item--active' : 'main-navigation__additional' }">Stats</a>
   </nav>`
 );
 
@@ -34,7 +34,9 @@ export default class FiltersView extends Component {
     this._filters = filters;
 
     this.handleChangeFilter = null;
+    this.handleChangeView = null;
 
+    this._handleChangeView = this._handleChangeView.bind(this);
     this._handleChangeFilter = this._handleChangeFilter.bind(this);
   }
 
@@ -68,12 +70,17 @@ export default class FiltersView extends Component {
     }
   }
 
+  _handleChangeView() {
+    this.handleChangeView();
+  }
+
   getTemplate() {
     return createFilterButtonListTemplate(this._active, this._filters);
   }
 
   _addEventListeners() {
     this.element.querySelector('.main-navigation__items').addEventListener('click', this._handleChangeFilter);
+    this.element.querySelector('.main-navigation__additional').addEventListener('click', this._handleChangeView);
   }
 
   _removeEventListeners() {

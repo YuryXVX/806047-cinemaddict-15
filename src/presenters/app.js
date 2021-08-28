@@ -8,6 +8,7 @@ import Profile from '../views/profile';
 
 // presenters
 import FilmList from './film-list';
+import Statistic from './statistics';
 
 // constants
 import { RootPresenter } from './root-presenter';
@@ -15,65 +16,83 @@ import { RootPresenter } from './root-presenter';
 export default class App extends RootPresenter {
   constructor({ header, main, footer }, store) {
     super(store);
+    this._isStaticsitcsViewRendered = false;
 
     this._headerContainer = header;
     this._mainContainer = main;
     this._footerContainer = footer;
 
-    this._profileComponent = null;
-    this._filterComponent = null;
-    this._footerComponent = new Footer(this._model.films.length);
+    this._profileView = null;
+    this._filterView = null;
+    this._footerView = new Footer(this._model.films.length);
 
     this._handleRaitingChange = this._handleRaitingChange.bind(this);
     this._handleChangeFilter = this._handleChangeFilter.bind(this);
     this._handleFiltersCountChange = this._handleFiltersCountChange.bind(this);
+    this._handleDestroyFilmListPresentor = this._handleDestroyFilmListPresentor.bind(this);
 
     this._filmListPresenter = new FilmList(this._model, this._handleRaitingChange, this._handleFiltersCountChange);
+    this._statisticsPresenter = new Statistic();
   }
 
-  _rerender({ activeFilter }) {
-    this._filterComponent.activeFilter = activeFilter;
+  rerender({ activeFilter }) {
+    this._filterView.activeFilter = activeFilter;
   }
 
   _handleFiltersCountChange() {
-    this._filterComponent.filters = this._model.updateFilters();
-  }
-
-  _handlerFiltersChange(value) {
-    const filters = this._model.updateFilters(value);
-    this._renderFilterComponent(this._model.activeFilter, filters);
+    this._filterView.filters = this._model.updateFilters();
   }
 
   _handleRaitingChange(value) {
     this._model.updateRating(value);
-    this._profileComponent.raiting = this._model.userRating;
+    this._profileView.raiting = this._model.userRating;
   }
 
   _handleChangeFilter(filter) {
+    if(this._isStaticsitcsViewRendered) {
+      this._statisticsPresenter.destroy();
+
+      this._renderFilmListPresenter();
+    }
     this._model.activeFilter = filter;
     this._model.activeSortButton = SortType.DEFAULT;
+  }
+
+  _handleDestroyFilmListPresentor() {
+    this._isStaticsitcsViewRendered = true;
+    this._filterView.activeFilter = 'STATISTIC';
+
+    this._filmListPresenter.destroy();
+
+    this._statisticsPresenter.render({ container: this._mainContainer, data: this._model });
+  }
+
+  _renderFilmListPresenter() {
+    this._isStaticsitcsViewRendered = false;
+    this._filmListPresenter.render({ container: this._mainContainer, filters: this._filterView });
   }
 
   render() {
     this._renderHeaderComponent();
     this._renderFilterComponent(this._model.activeFilter, this._model.filters);
-    this._filmListPresenter.render(this._mainContainer);
+    this._renderFilmListPresenter();
     this._renderFooterComponent();
   }
 
   _renderHeaderComponent() {
-    this._profileComponent = new Profile(this._model.userRating);
-    render(this._headerContainer, this._profileComponent.getElement(), RenderPosition.BEFOREEND);
+    this._profileView = new Profile(this._model.userRating);
+    render(this._headerContainer, this._profileView.getElement(), RenderPosition.BEFOREEND);
   }
 
   _renderFooterComponent() {
-    render(this._footerContainer, this._footerComponent.getElement(), RenderPosition.BEFOREEND);
+    render(this._footerContainer, this._footerView.getElement(), RenderPosition.BEFOREEND);
   }
 
   _renderFilterComponent(activeFilter, filters) {
-    this._filterComponent = new Filters(activeFilter, filters);
-    this._filterComponent.handleChangeFilter = this._handleChangeFilter;
+    this._filterView = new Filters(activeFilter, filters);
+    this._filterView.handleChangeFilter = this._handleChangeFilter;
+    this._filterView.handleChangeView = this._handleDestroyFilmListPresentor;
 
-    render(this._mainContainer, this._filterComponent.getElement(), RenderPosition.AFTERBEGIN);
+    render(this._mainContainer, this._filterView.getElement(), RenderPosition.AFTERBEGIN);
   }
 }

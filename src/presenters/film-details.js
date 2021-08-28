@@ -9,27 +9,50 @@ import { RootPresenter } from './root-presenter';
 import FilmDetails from '../views/film-details';
 import FilmDetailsControls from '../views/films-details-controls';
 import FilmDetailsNewCommentView from '../views/film-details-new-comment';
+import FilmsDetailsComment from '../views/film-details-comment';
+import FilmDetailsCommentList from '../views/film-details-list';
+import { getRandomRaiting } from '../utils/random';
 
 export default class FilmDetailsPresenter extends RootPresenter {
-  constructor(store, onDataChange) {
+  constructor(store, handleDataChange) {
     super(store);
     this._filmDetailsView = null;
     this._filmDetailsControls = null;
     this._filmDetailsNewCommentView = null;
+    this._filmDetailsCommnentViews = null;
+    this._filmDetailsCommnentListView = new FilmDetailsCommentList();
 
     this._id = null;
 
     this._data = null;
     this._newData = null;
 
-    this._onDataChange = onDataChange;
+    this._handleDataChange = handleDataChange;
 
     this._handleClosePopupKeyDown = this._handleClosePopupKeyDown.bind(this);
-    this._onClosePopup = this._onClosePopup.bind(this);
+    this._handleClosePopup = this._handleClosePopup.bind(this);
 
     this._handleWatchListButton = this._handleWatchListButton.bind(this);
     this._handleHistoryListButton = this._hadleHistoryListButton.bind(this);
     this._handleFavoriteListButton = this._handleFavoriteListButton.bind(this);
+    this._handleDeleteComment = this._handleDeleteComment.bind(this);
+
+    this._changedModalData = this._changedModalData.bind(this);
+    this._handleCreateComment = this._handleCreateComment.bind(this);
+
+    this._model.addCommentsChangeListener(this._changedModalData);
+  }
+
+  _changedModalData(data) {
+    const newData = data.films.find((it) => it.id === this.modalId);
+
+    this._data = {
+      ...newData,
+      comments: this._model.commentsList.filter((comment) => newData.comments.includes(comment.id)),
+    };
+
+    this._updateComments(this._data.comments);
+    this._filmDetailsView.updateCommentCountElement(this._data.comments.length);
   }
 
 
@@ -37,12 +60,24 @@ export default class FilmDetailsPresenter extends RootPresenter {
     return this._id;
   }
 
-  _onClosePopup() {
+  _handleClosePopup() {
     this._removePopup();
+  }
+
+  _handleCreateComment(comment) {
+    const newComment = {
+      ...comment,
+      id: Math.floor(getRandomRaiting(300)),
+      author: 'Awesome Random Name',
+    };
+
+    this._model.createComment(this.modalId, newComment);
   }
 
   _removePopup() {
     document.removeEventListener('keyup', this._handleClosePopupKeyDown);
+    this._model.removeCommentsChangeListener(this._changedModalData);
+
     classListRemove(document.body, 'hide-overflow');
 
     if(this._filmDetailsView) {
@@ -77,21 +112,44 @@ export default class FilmDetailsPresenter extends RootPresenter {
     const newData = deepClone(this._data);
     newData.filmDetails.watchlist = !newData.filmDetails.watchlist;
 
-    this._onDataChange(this, data, newData, ModeView.MODAL);
+    this._handleDataChange(this, data, newData, ModeView.MODAL);
   }
 
   _handleFavoriteListButton(data) {
     const newData = deepClone(this._data);
     newData.filmDetails.favorite = !newData.filmDetails.favorite;
 
-    this._onDataChange(this, data, newData, ModeView.MODAL);
+    this._handleDataChange(this, data, newData, ModeView.MODAL);
   }
 
   _hadleHistoryListButton(data) {
     const newData = deepClone(this._data);
     newData.filmDetails.history = !newData.filmDetails.history;
 
-    this._onDataChange(this, data, newData, ModeView.MODAL);
+    this._handleDataChange(this, data, newData, ModeView.MODAL);
+  }
+
+  _handleDeleteComment(data) {
+    this._model.deleteComment(this.modalId, data.id);
+  }
+
+
+  _removeCommentList() {
+    this.__filmDetailsCommnentViews.forEach((filmView) => filmView.destroyElement());
+  }
+
+  _updateComments(comments) {
+    this._removeCommentList();
+    this._renderCommnents(comments);
+  }
+
+  _renderCommnents(comments) {
+    this.__filmDetailsCommnentViews = comments.map((comment) => {
+      const commentView = new FilmsDetailsComment(comment, this._handleDeleteComment);
+      commentView.handleDeleteComment = this._handleDeleteComment;
+      render(this._filmDetailsCommnentListView.element, commentView.getElement(), RenderPosition.BEFOREEND);
+      return commentView;
+    });
   }
 
   render(data) {
@@ -103,20 +161,24 @@ export default class FilmDetailsPresenter extends RootPresenter {
       comments: this._model.commentsList.filter((comment) => data.comments.includes(comment.id)),
     };
 
-    this._filmDetailsView = new FilmDetails(model, this._onClosePopup);
+    this._filmDetailsView = new FilmDetails(model, this._handleClosePopup);
     this._filmDetailsControls = new FilmDetailsControls(data);
     this._filmDetailsNewCommentView = new FilmDetailsNewCommentView();
 
     document.addEventListener('keyup', this._handleClosePopupKeyDown);
 
     render(this._filmDetailsView.filmListDetailsContainer, this._filmDetailsControls.getElement(), RenderPosition.BEFOREEND);
+    render(this._filmDetailsView.filmsDetailsCommentWrap, this._filmDetailsCommnentListView.element, RenderPosition.BEFOREEND);
     render(this._filmDetailsView.filmsDetailsCommentWrap, this._filmDetailsNewCommentView.getElement(), RenderPosition.BEFOREEND);
 
     this._filmDetailsControls.handleWatchListButton = this._handleWatchListButton;
     this._filmDetailsControls.handleHistoryListButton = this._handleHistoryListButton;
     this._filmDetailsControls.handleFavoriteListButton = this._handleFavoriteListButton;
+    this._filmDetailsNewCommentView.handleCreateComment = this._handleCreateComment;
 
     this._filmDetailsView.setCloseButtonClickHandler();
+
+    this._renderCommnents(model.comments);
 
 
     render(document.body, this._filmDetailsView.getElement(), RenderPosition.BEFOREEND);

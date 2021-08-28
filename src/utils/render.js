@@ -4,6 +4,7 @@ import { freeze } from './helpers';
 export const RenderPosition = freeze({
   AFTERBEGIN: 'afterbegin',
   BEFOREEND: 'beforeend',
+  AFTER: 'after',
 });
 
 export const createElement = (template) => {
@@ -21,6 +22,8 @@ export const render = (container, component, place) => {
     case RenderPosition.BEFOREEND:
       container.append(component);
       break;
+    case RenderPosition.AFTER:
+      container.after(component);
   }
 };
 
