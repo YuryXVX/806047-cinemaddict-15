@@ -130,7 +130,7 @@ export default class FilmDetailsPresenter extends RootPresenter {
   }
 
   _handleDeleteComment(data) {
-    this._model.deleteComments(this.modalId, data.id);
+    this._model.deleteComment(this.modalId, data.id);
   }
 
 

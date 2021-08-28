@@ -37,6 +37,10 @@ export default class FilmListPresenter extends RootPresenter {
     this._handleFiltersCountChange = handleFiltersCountChange;
 
     this._showFilmsCount = FILMS_COUNT_PER_STEP;
+
+
+    this._rerender = this.rerender.bind(this);
+    this._model.addDataChangeListener(this.rerender.bind(this));
   }
 
   rerender({ films }) {
@@ -166,6 +170,7 @@ export default class FilmListPresenter extends RootPresenter {
   }
 
   _onLoadMoreButtonClick() {
+    this._model.filters = 'some';
     const prevFilmsCount = this._showFilmsCount;
     const films = this._model.films;
 
@@ -199,6 +204,8 @@ export default class FilmListPresenter extends RootPresenter {
 
   destroy() {
     this._showFilmsCount = FILMS_COUNT_PER_STEP;
+
+    this._model.removeDataChangeListener(this._rerender);
 
     this._removeFilms();
     removeElement(this._containerView);

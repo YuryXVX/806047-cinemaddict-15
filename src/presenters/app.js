@@ -16,7 +16,7 @@ import { RootPresenter } from './root-presenter';
 export default class App extends RootPresenter {
   constructor({ header, main, footer }, store) {
     super(store);
-    this._isStatisticsViewRender = false;
+    this._isStaticsitcsViewRendered = false;
 
     this._headerContainer = header;
     this._mainContainer = main;
@@ -49,17 +49,17 @@ export default class App extends RootPresenter {
   }
 
   _handleChangeFilter(filter) {
-    if(this._isStatisticsViewRender) {
+    if(this._isStaticsitcsViewRendered) {
       this._statisticsPresenter.destroy();
 
-      this._renderFilmListPresentor();
+      this._renderFilmListPresenter();
     }
     this._model.activeFilter = filter;
     this._model.activeSortButton = SortType.DEFAULT;
   }
 
   _handleDestroyFilmListPresentor() {
-    this._isStatisticsViewRender = true;
+    this._isStaticsitcsViewRendered = true;
     this._filterView.activeFilter = 'STATISTIC';
 
     this._filmListPresenter.destroy();
@@ -67,15 +67,15 @@ export default class App extends RootPresenter {
     this._statisticsPresenter.render({ container: this._mainContainer, data: this._model });
   }
 
-  _renderFilmListPresentor() {
-    this._isStatisticsViewRender = false;
+  _renderFilmListPresenter() {
+    this._isStaticsitcsViewRendered = false;
     this._filmListPresenter.render({ container: this._mainContainer, filters: this._filterView });
   }
 
   render() {
     this._renderHeaderComponent();
     this._renderFilterComponent(this._model.activeFilter, this._model.filters);
-    this._filmListPresenter.render({ container: this._mainContainer, filters: this._filterView });
+    this._renderFilmListPresenter();
     this._renderFooterComponent();
   }
 

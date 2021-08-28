@@ -57,8 +57,6 @@ export default class FilmsStore {
       return;
     }
 
-    // this._callListeners(this._listeners);
-
     this._state.films = [].concat(this._state.films.slice(0, index), newData, this._state.films.slice(index + 1));
 
     return new Promise((resolve) => resolve(newData));
@@ -110,7 +108,7 @@ export default class FilmsStore {
     this._state.films = [].concat(this._state.films.slice(0, index), newItem, this._state.films.slice(index + 1));
   }
 
-  deleteComments(filmId, commentId) {
+  deleteComment(filmId, commentId) {
     const index = this._getFilmIndexById(filmId);
     const commentIndex = this._state.films[index].comments.findIndex((id) => id === commentId);
     this._state.films[index].comments.splice(commentIndex, 1);
@@ -149,6 +147,3 @@ export default class FilmsStore {
     this._commentListeners.delete(listener);
   }
 }
-
-
-// const index = this._state.films.findIndex((film) => film.id === filmId)
