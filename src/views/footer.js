@@ -9,10 +9,20 @@ const createFooterTemplate = (filmCount) => (
 export default class FooterView extends Component {
   constructor(filmCount) {
     super();
-    this._filmCount = filmCount;
+    this._filmsCount = filmCount;
+  }
+
+  get filmsCount() {
+    return this._filmsCount;
+  }
+
+  set filmsCount(newValue) {
+    this._filmsCount = newValue;
+
+    this.updateComponent();
   }
 
   getTemplate() {
-    return createFooterTemplate(this._filmCount);
+    return createFooterTemplate(this._filmsCount);
   }
 }

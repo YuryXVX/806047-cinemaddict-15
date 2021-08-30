@@ -1,7 +1,7 @@
 import { FILMS_COUNT_PER_STEP, ModeView, SortType } from '../const';
 import { render, RenderPosition, removeElement } from '../utils/render';
 import { getFilmPresenters } from './film';
-import { RootPresenter } from './root-presenter';
+import RootPresenter from './root-presenter';
 
 // views
 import Container from '../views/container';
@@ -11,6 +11,7 @@ import ShowMoreButton from '../views/show-more-button';
 
 // presenter
 import FilmDetailsPresenter from './film-details';
+import Film, { toRawFilmModel } from '../models/film';
 
 export default class FilmListPresenter extends RootPresenter {
   constructor(store, handleRaitingChange, handleFiltersCountChange) {
@@ -37,10 +38,6 @@ export default class FilmListPresenter extends RootPresenter {
     this._handleFiltersCountChange = handleFiltersCountChange;
 
     this._showFilmsCount = FILMS_COUNT_PER_STEP;
-
-
-    this._rerender = this.rerender.bind(this);
-    this._model.addDataChangeListener(this.rerender.bind(this));
   }
 
   rerender({ films }) {
@@ -65,6 +62,7 @@ export default class FilmListPresenter extends RootPresenter {
   }
 
   render({ container, filters }) {
+    super.render();
     this._container = container;
     this._filterComponentRef = filters;
 
@@ -123,21 +121,22 @@ export default class FilmListPresenter extends RootPresenter {
   }
 
   _handleDataChange(controller, oldData, newData, mode) {
-    this._model.updateFilm(oldData, newData);
+    this._api.updateFilm(oldData.id, new Film(toRawFilmModel(newData))).then(() => {
+      this._model.updateFilm(oldData, newData);
 
-    if(mode === ModeView.MODAL) {
-      controller.setData(newData);
-    } else {
-      controller.render(newData);
-    }
+      if(mode === ModeView.MODAL) {
+        controller.setData(newData);
+      } else {
+        controller.render(newData);
+      }
 
-    this._updateFilms(this._showFilmsCount);
-    this._handleRatingChange(this._model.films);
-    this._handleFiltersCountChange(this._model.films);
-
-    if(!this._model.films.length) {
-      this._renderNoFilmsMessage();
-    }
+      this._updateFilms(this._showFilmsCount);
+      this._handleRatingChange(this._model.films);
+      this._handleFiltersCountChange(this._model.films);
+      if(!this._model.films.length) {
+        this._renderNoFilmsMessage();
+      }
+    });
   }
 
   _renderNoFilmsMessage() {
@@ -170,13 +169,13 @@ export default class FilmListPresenter extends RootPresenter {
   }
 
   _onLoadMoreButtonClick() {
-    this._model.filters = 'some';
     const prevFilmsCount = this._showFilmsCount;
     const films = this._model.films;
 
     this._showFilmsCount = this._showFilmsCount + FILMS_COUNT_PER_STEP;
 
     const chunckFilmList = films.slice(prevFilmsCount, this._showFilmsCount);
+
 
     this._renderFilms(chunckFilmList);
 
@@ -197,15 +196,22 @@ export default class FilmListPresenter extends RootPresenter {
   _renderFilmDetailsPopup(film) {
     this._destroyOpenPopupDetails();
 
-    this._filmDetailsPresenter = new FilmDetailsPresenter(this._model, this._handleDataChange);
-    this._filmDetailsPresenters.add(this._filmDetailsPresenter);
-    this._filmDetailsPresenter.render(film);
+    this._api
+      .getComments(film.id)
+      .then((comments) => {
+        this._model.commentsList = comments;
+
+        const data = { ...film, comments };
+        this._filmDetailsPresenter = new FilmDetailsPresenter(this._model, this._handleDataChange);
+        this._filmDetailsPresenters.add(this._filmDetailsPresenter);
+        this._filmDetailsPresenter.render(data);
+      });
   }
 
   destroy() {
-    this._showFilmsCount = FILMS_COUNT_PER_STEP;
+    super.destroy();
 
-    this._model.removeDataChangeListener(this._rerender);
+    this._showFilmsCount = FILMS_COUNT_PER_STEP;
 
     this._removeFilms();
     removeElement(this._containerView);

@@ -1,21 +1,20 @@
 import { SortType } from '../const';
-import { render, RenderPosition } from '../utils/render';
+import { removeElement, render, RenderPosition } from '../utils/render';
 
 // views
 import Filters from '../views/filters';
 import Footer from '../views/footer';
 import Profile from '../views/profile';
+import LoadingView  from '../views/loading';
 
 // presenters
 import FilmList from './film-list';
 import Statistic from './statistics';
-
-// constants
-import { RootPresenter } from './root-presenter';
+import RootPresenter from './root-presenter';
 
 export default class App extends RootPresenter {
-  constructor({ header, main, footer }, store) {
-    super(store);
+  constructor({ header, main, footer }, store, api) {
+    super(store, api);
     this._isStaticsitcsViewRendered = false;
 
     this._headerContainer = header;
@@ -24,7 +23,8 @@ export default class App extends RootPresenter {
 
     this._profileView = null;
     this._filterView = null;
-    this._footerView = new Footer(this._model.films.length);
+    this._loadingView = null;
+    this._footerView = null;
 
     this._handleRaitingChange = this._handleRaitingChange.bind(this);
     this._handleChangeFilter = this._handleChangeFilter.bind(this);
@@ -35,8 +35,19 @@ export default class App extends RootPresenter {
     this._statisticsPresenter = new Statistic();
   }
 
-  rerender({ activeFilter }) {
-    this._filterView.activeFilter = activeFilter;
+  beforeRender() {
+    this._renderDefaultLayout();
+  }
+
+  _renderDefaultLayout() {
+    this._renderHeaderComponent();
+    this._renderFilterComponent(this._model.activeFilter, this._model.filters);
+
+    this._loadingView = new LoadingView();
+
+    render(this._mainContainer, this._loadingView.getElement(), RenderPosition.BEFOREEND);
+
+    this._renderFooterComponent();
   }
 
   _handleFiltersCountChange() {
@@ -51,10 +62,10 @@ export default class App extends RootPresenter {
   _handleChangeFilter(filter) {
     if(this._isStaticsitcsViewRendered) {
       this._statisticsPresenter.destroy();
-
       this._renderFilmListPresenter();
     }
     this._model.activeFilter = filter;
+    this._filterView.activeFilter = filter;
     this._model.activeSortButton = SortType.DEFAULT;
   }
 
@@ -69,14 +80,25 @@ export default class App extends RootPresenter {
 
   _renderFilmListPresenter() {
     this._isStaticsitcsViewRendered = false;
+
+    if(this._loadingView) {
+      removeElement(this._loadingView);
+    }
+
+    this._loadingView = null;
+
     this._filmListPresenter.render({ container: this._mainContainer, filters: this._filterView });
   }
 
+  _updated() {
+    this._profileView.raiting = this._model.userRating;
+    this._footerView.filmsCount = this._model.films.length;
+    this._handleFiltersCountChange();
+  }
+
   render() {
-    this._renderHeaderComponent();
-    this._renderFilterComponent(this._model.activeFilter, this._model.filters);
+    this._updated();
     this._renderFilmListPresenter();
-    this._renderFooterComponent();
   }
 
   _renderHeaderComponent() {
@@ -85,6 +107,7 @@ export default class App extends RootPresenter {
   }
 
   _renderFooterComponent() {
+    this._footerView = new Footer(this._model.films.length);
     render(this._footerContainer, this._footerView.getElement(), RenderPosition.BEFOREEND);
   }
 

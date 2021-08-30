@@ -1,0 +1,66 @@
+import Film from '../models/film';
+import Comment from '../models/comment';
+
+export const HTTPMethod = {
+  GET: 'GET',
+  POST: 'POST',
+  PUT: 'PUT',
+  DELETE: 'DELETE',
+};
+
+export default class Api {
+  constructor() {
+    this._authorization = 'Basic dXNlckBwYXN';
+    this._endPoint = 'https://15.ecmascript.pages.academy/cinemaddict/';
+  }
+
+  getAllMovies() {
+    return this._load({ url: 'movies'})
+      .then((response) => response.json())
+      .then((raw) => raw.map((it) => new Film(it)));
+  }
+
+  updateFilm(filmID, film) {
+    return this._load({
+      url: `movies/${filmID}`,
+      method: HTTPMethod.PUT,
+      body: JSON.stringify(film.getRaw()),
+      headers: new Headers({'Content-Type': 'application/json'}),
+    })
+      .then((response) => response.json())
+      .then((rawFilm) => new Film(rawFilm));
+  }
+
+  getComments(filmID) {
+    return this._load({url: `comments/${filmID}`})
+      .then((response) => response.json())
+      .then((rawComments) => rawComments.map((rawComment) => new Comment(rawComment)));
+  }
+
+  createComment(filmID, comment) {
+    return this._load({
+      url: `comments/${filmID}`,
+      method: HTTPMethod.POST,
+      body: JSON.stringify(comment.getRaw()),
+      headers: new Headers({'Content-Type': 'application/json'}),
+    })
+      .then((response) => response.json())
+      .then(({comments: rawComments}) => rawComments.map((rawComment) => new Comment(rawComment)));
+  }
+
+  deleteComment(commentID) {
+    return this._load({
+      url: `comments/${commentID}`,
+      method: HTTPMethod.DELETE,
+    });
+  }
+
+  _load({url, method = HTTPMethod.GET, body = null, headers = new Headers()}) {
+    headers.append('Authorization', this._authorization);
+    return fetch(`${this._endPoint}/${url}`, {method, body, headers})
+      .then((raw) => raw)
+      .catch((error) => {
+        throw error;
+      });
+  }
+}
