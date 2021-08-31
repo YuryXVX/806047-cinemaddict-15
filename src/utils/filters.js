@@ -1,4 +1,4 @@
-import { TimePeriod } from '../const';
+import { TimePeriod, ProfileRaiting, SortType, FilterType } from '../const';
 
 const toArrayFilmsToMapGanre = (target) => target.reduce((r, [k, v]) => ({ ...r, [k]: v }), {});
 const sortedMapByMaxCount = (target) => (Object.entries(target).sort(([, a], [, b]) => b - a));
@@ -97,3 +97,53 @@ export const filterFilmsByWatchingDate = (films, timePeriod) => {
     return watchingDate >= dateToCompare;
   });
 };
+
+
+export const getFilmsByFilter = (films, filter) => {
+  if(filter === 'ALL') {
+    return films;
+  }
+
+  return films.slice().filter(({ filmDetails }) => filmDetails[filter.toLowerCase()]);
+};
+
+export const getUserRaiting = (filmsCount) => {
+  if(filmsCount >= 1 && filmsCount <= 10) {
+    return ProfileRaiting.NOVICE;
+  }
+
+  if(filmsCount >= 11 && filmsCount <= 20) {
+    return ProfileRaiting.FAN;
+  }
+
+  if(filmsCount >= 21) {
+    return ProfileRaiting.MORE_BUFF;
+  }
+
+  return ProfileRaiting.NOTHING;
+};
+
+export const getSortFilms = (films ,sortType = SortType.DEFAULT) => {
+  switch(sortType) {
+    case SortType.RATING: {
+      return films.slice().sort((a, b) => a.info.totalRating > b.info.totalRating ? -1 : 0);
+    }
+
+    case SortType.DATE: {
+      return films.slice().sort((a, b) => new Date(a.filmDetails.watchingDate) - new Date(b.filmDetails.watchingDate));
+    }
+
+    default: {
+      return films.slice();
+    }
+  }
+};
+
+export const updateFilters = (films, activeFilter) => Object
+  .keys(FilterType)
+  .map((filter) => ({
+    name: FilterType[filter],
+    count: filter === activeFilter
+      ? getFilmsByFilter(films, activeFilter).length
+      : getFilmsByFilter(films, filter).length,
+  }));

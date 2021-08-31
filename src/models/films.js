@@ -1,22 +1,6 @@
 import { FilterType, SortType } from '../const';
-import { getFilmsByFilter, getUserRaiting } from '../mock';
+import { getSortFilms, getFilmsByFilter } from '../utils/filters';
 import Model from './model';
-
-const getSortFilms = (films ,sortType = SortType.DEFAULT) => {
-  switch(sortType) {
-    case SortType.RATING: {
-      return films.slice().sort((a, b) => a.info.totalRating > b.info.totalRating ? -1 : 0);
-    }
-
-    case SortType.DATE: {
-      return films.slice().sort((a, b) => new Date(a.filmDetails.watchingDate) - new Date(b.filmDetails.watchingDate));
-    }
-
-    default: {
-      return films.slice();
-    }
-  }
-};
 
 const filters = [
   {name: 'All Films', count: 0},
@@ -82,9 +66,7 @@ export default class FilmsStore extends Model {
 
   get userRating() { return this._state.userRating; }
 
-  updateRating(value) {
-    this._state.userRating = getUserRaiting(getFilmsByFilter(value, FilterType.HISTORY).length);
-  }
+  set userRating(newValue) { this._state.userRating = newValue; }
 
   get filters() { return this._state.filters; }
 

@@ -1,4 +1,4 @@
-import { SortType } from '../const';
+import { FilterType, SortType } from '../const';
 import { removeElement, render, RenderPosition } from '../utils/render';
 
 // views
@@ -11,10 +11,11 @@ import LoadingView  from '../views/loading';
 import FilmList from './film-list';
 import Statistic from './statistics';
 import RootPresenter from './root-presenter';
+import { getFilmsByFilter, getUserRaiting } from '../utils/filters';
 
 export default class App extends RootPresenter {
-  constructor({ header, main, footer }, store, api) {
-    super(store, api);
+  constructor({ header, main, footer }, store) {
+    super(store);
     this._isStaticsitcsViewRendered = false;
 
     this._headerContainer = header;
@@ -55,7 +56,7 @@ export default class App extends RootPresenter {
   }
 
   _handleRaitingChange(value) {
-    this._model.updateRating(value);
+    this._model.userRating = getUserRaiting(getFilmsByFilter(value, FilterType.HISTORY).length);
     this._profileView.raiting = this._model.userRating;
   }
 
@@ -91,9 +92,9 @@ export default class App extends RootPresenter {
   }
 
   _updated() {
-    this._profileView.raiting = this._model.userRating;
     this._footerView.filmsCount = this._model.films.length;
     this._handleFiltersCountChange();
+    this._handleRaitingChange(this._model.films);
   }
 
   render() {

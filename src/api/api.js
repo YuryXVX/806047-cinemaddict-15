@@ -1,12 +1,6 @@
-import Film from '../models/film';
-import Comment from '../models/comment';
-
-export const HTTPMethod = {
-  GET: 'GET',
-  POST: 'POST',
-  PUT: 'PUT',
-  DELETE: 'DELETE',
-};
+import Comment from '../adapters/comment';
+import Film from '../adapters/film';
+import { SuccessHTTPStatusRange, HTTPMethod } from '../const';
 
 export default class Api {
   constructor() {
@@ -58,9 +52,22 @@ export default class Api {
   _load({url, method = HTTPMethod.GET, body = null, headers = new Headers()}) {
     headers.append('Authorization', this._authorization);
     return fetch(`${this._endPoint}/${url}`, {method, body, headers})
-      .then((raw) => raw)
-      .catch((error) => {
-        throw error;
-      });
+      .then(Api.checkStatus)
+      .catch(Api.catchError);
+  }
+
+  static checkStatus(response) {
+    if (
+      response.status < SuccessHTTPStatusRange.MIN ||
+      response.status > SuccessHTTPStatusRange.MAX
+    ) {
+      throw new Error(`${response.status}: ${response.statusText}`);
+    }
+
+    return response;
+  }
+
+  static catchError(err) {
+    throw err;
   }
 }

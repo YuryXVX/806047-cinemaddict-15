@@ -11,7 +11,7 @@ import ShowMoreButton from '../views/show-more-button';
 
 // presenter
 import FilmDetailsPresenter from './film-details';
-import Film, { toRawFilmModel } from '../models/film';
+import Film, { toRawFilmModel } from '../adapters/film';
 
 export default class FilmListPresenter extends RootPresenter {
   constructor(store, handleRaitingChange, handleFiltersCountChange) {

@@ -44,6 +44,18 @@ export const TimePeriod = freeze({
   YEAR: 'year',
 });
 
+export const SuccessHTTPStatusRange = {
+  MIN: 200,
+  MAX: 299,
+};
+
+export const HTTPMethod = {
+  GET: 'GET',
+  POST: 'POST',
+  PUT: 'PUT',
+  DELETE: 'DELETE',
+};
+
 export const FILMS_COUNT_PER_STEP = 5;
 
 export const FILMS_COUNT = 35;

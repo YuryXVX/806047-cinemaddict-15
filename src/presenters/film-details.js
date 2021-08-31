@@ -12,8 +12,8 @@ import FilmDetailsNewCommentView from '../views/film-details-new-comment';
 import FilmsDetailsComment from '../views/film-details-comment';
 import FilmDetailsCommentList from '../views/film-details-list';
 
-// models
-import Comment from '../models/comment';
+// adapters
+import Comment from '../adapters/comment';
 
 export default class FilmDetailsPresenter extends RootPresenter {
   constructor(store, onDataChange) {
@@ -32,7 +32,7 @@ export default class FilmDetailsPresenter extends RootPresenter {
     this._onDataChange = onDataChange;
 
     this._handleClosePopupKeyDown = this._handleClosePopupKeyDown.bind(this);
-    this._onClosePopup = this._onClosePopup.bind(this);
+    this._handleClosePopup = this._handleClosePopup.bind(this);
 
     this._handleWatchListButton = this._handleWatchListButton.bind(this);
     this._handleHistoryListButton = this._hadleHistoryListButton.bind(this);
@@ -63,17 +63,26 @@ export default class FilmDetailsPresenter extends RootPresenter {
     return this._id;
   }
 
-  _onClosePopup() {
+  _handleClosePopup() {
     this._removePopup();
   }
 
   _handleCreateComment(payload) {
     const newComment = new Comment(payload);
 
+    this._filmDetailsNewCommentView.disabledForm = true;
 
-    this._api.createComment(this.modalId, newComment).then((res) => {
-      this._model.createComment(this.modalId, res);
-    });
+    this._api.createComment(this.modalId, newComment)
+      .then((res) => {
+        this._model.createComment(this.modalId, res);
+        this._filmDetailsNewCommentView.disabledForm = false;
+      })
+      .catch(() => {
+        this._filmDetailsNewCommentView.errorState = true;
+      })
+      .finally(() => {
+        this._filmDetailsNewCommentView.disabledForm = false;
+      });
   }
 
   _removePopup() {
@@ -132,9 +141,19 @@ export default class FilmDetailsPresenter extends RootPresenter {
   }
 
   _handleDeleteComment(data) {
+    const commentView = this._filmDetailsCommnentViews.find((view) => view.id === data.id);
+
+    commentView.isDisabledDeleteButton = true;
+
     this._api.deleteComment(data.id)
       .then(() => {
         this._model.deleteComment(this.modalId, data.id);
+      })
+      .catch(() => {
+        commentView.errorState = true;
+      })
+      .finally(() => {
+        commentView.isDisabledDeleteButton = false;
       });
   }
 
@@ -161,7 +180,7 @@ export default class FilmDetailsPresenter extends RootPresenter {
     this._data = data;
     this._id = data.id;
 
-    this._filmDetailsView = new FilmDetails(data, this._onClosePopup);
+    this._filmDetailsView = new FilmDetails(data, this._handleClosePopup);
     this._filmDetailsControls = new FilmDetailsControls(data);
     this._filmDetailsNewCommentView = new FilmDetailsNewCommentView();
 
@@ -179,7 +198,6 @@ export default class FilmDetailsPresenter extends RootPresenter {
     this._filmDetailsView.setCloseButtonClickHandler();
 
     this._renderCommnents(data.comments);
-
 
     render(document.body, this._filmDetailsView.getElement(), RenderPosition.BEFOREEND);
   }
