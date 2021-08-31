@@ -1,72 +1,7 @@
+import { getFilmInfoForStatisticsView, getFimsCountByGenre, filterFilmsByWatchingDate } from '../utils/filters';
 import { render, RenderPosition } from '../utils/render';
 import StatisticView from '../views/statistics';
 import StatisticChartView from '../views/statistics-chart';
-
-const getAllFilmsDuration = (films) => films.length ? films.reduce((total, film) => total + film.info.runtime, 0) : 0;
-
-const getFilmInfoForStatisticsView = (films) => ({
-  totalDutation: getAllFilmsDuration(films),
-  watchedFilmsCount: films.length ? films.length : 0,
-});
-
-
-const TimePeriod = {
-  TODAY: 'today',
-  WEEK: 'week',
-  MONTH: 'month',
-  YEAR: 'year',
-};
-
-export const filterFilmsByWatchingDate = (films, timePeriod) => {
-  const currentDate = new Date();
-  const currentYear = currentDate.getFullYear();
-  const currentMonth = currentDate.getMonth();
-  const currentMonthDay = currentDate.getDate();
-  const currentHours = currentDate.getHours();
-  const currentMinutes = currentDate.getMinutes();
-  const currentSeconds = currentDate.getSeconds();
-  const currentMilliseconds = currentDate.getMilliseconds();
-  let dateToCompare;
-
-  switch (timePeriod) {
-    case TimePeriod.TODAY:
-      dateToCompare = new Date(currentYear, currentMonth, currentMonthDay);
-
-      break;
-
-    case TimePeriod.WEEK:
-      dateToCompare = new Date(currentYear, currentMonth, currentMonthDay - 7, currentHours, currentMinutes, currentSeconds, currentMilliseconds);
-
-      break;
-
-    case TimePeriod.MONTH:
-      dateToCompare = new Date(currentYear, currentMonth - 1, currentMonthDay, currentHours, currentMinutes, currentSeconds, currentMilliseconds);
-
-      break;
-
-    case TimePeriod.YEAR:
-      dateToCompare = new Date(currentYear - 1, currentMonth, currentMonthDay, currentHours, currentMinutes, currentSeconds, currentMilliseconds);
-
-      break;
-
-    default:
-      dateToCompare = null;
-  }
-
-  if (!dateToCompare) {
-    return films;
-  }
-
-  return films.filter((film) => {
-    const watchingDate = film.filmDetails.watchingDate ? new Date(film.filmDetails.watchingDate) : null;
-
-    if (!watchingDate) {
-      return null;
-    }
-
-    return watchingDate >= dateToCompare;
-  });
-};
 
 export default class StatisticPresenter {
   constructor() {
@@ -83,7 +18,7 @@ export default class StatisticPresenter {
     this._container = container;
     this._data = data;
 
-    const filmsData = getFilmInfoForStatisticsView(data.films.slice());
+    const filmsData = getFilmInfoForStatisticsView(data.films);
 
     this._statisticsView = new StatisticView(filmsData);
     this._statisticsView.rank = data.userRating;
@@ -92,11 +27,12 @@ export default class StatisticPresenter {
 
     render(this._container, this._statisticsView.getElement(), RenderPosition.BEFOREEND);
 
-    this._renderStatistics();
+    this._renderStatistics(this._data.films);
   }
 
   _renderStatistics(films) {
-    this._stastisticsChartView = new StatisticChartView(this._statisticsView.canvasContext, films || this._data.films);
+    const dataForStatisticChart = getFimsCountByGenre(films);
+    this._stastisticsChartView = new StatisticChartView(this._statisticsView.canvasContext, dataForStatisticChart);
     this._stastisticsChartView.renderChart();
   }
 

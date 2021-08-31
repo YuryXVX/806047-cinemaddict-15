@@ -2,16 +2,15 @@ import Chart from 'chart.js';
 import Component from './component';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 
-// Обязательно рассчитайте высоту canvas, она зависит от количества элементов диаграммы
-// statisticCtx.height = BAR_HEIGHT * 5;
+const BAR_HEIGHT  = 50;
 
-const chart = (statisticCtx, labels = []) => new Chart(statisticCtx, {
+const chart = (statisticCtx, { labels, data }) => new Chart(statisticCtx, {
   plugins: [ChartDataLabels],
   type: 'horizontalBar',
   data: {
     labels: labels,
     datasets: [{
-      data: [],
+      data: data,
       backgroundColor: '#ffe800',
       hoverBackgroundColor: '#ffe800',
       anchor: 'start',
@@ -73,6 +72,12 @@ export default class StatisticChartView extends Component {
   getTemplate() {}
 
   renderChart() {
-    return chart(this._context);
+
+    const labels = Object.keys(this._data);
+    const data = Object.values(this._data);
+
+    this._context.height = labels.length * BAR_HEIGHT;
+
+    return chart(this._context, { labels, data });
   }
 }

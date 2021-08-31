@@ -1,7 +1,7 @@
 import { filmDurationCovert } from '../utils/date';
 import Component from './component';
 
-const createStatisticTemplate = ({ rank, data: {watchedFilmsCount, totalDutation} }) => {
+const createStatisticTemplate = ({ rank, data: {watchedFilmsCount, totalDutation}, topGanre }) => {
   const [hour, minute] = filmDurationCovert(totalDutation).split(' ');
 
   return (`<section class="statistic">
@@ -37,11 +37,11 @@ const createStatisticTemplate = ({ rank, data: {watchedFilmsCount, totalDutation
       </li>
       <li class="statistic__text-item">
         <h4 class="statistic__item-title">Total duration</h4>
-        <p class="statistic__item-text">${hour} ${minute}</p>
+        <p class="statistic__item-text">${hour && minute ? `${hour} ${minute}` : '0:00'}</p>
       </li>
       <li class="statistic__text-item">
         <h4 class="statistic__item-title">Top genre</h4>
-        <p class="statistic__item-text">Sci-Fi</p>
+        <p class="statistic__item-text">${topGanre ? topGanre : 'No ganre'}</p>
       </li>
     </ul>
 
@@ -114,11 +114,19 @@ export default class StatisticView extends Component {
     });
   }
 
+  _removeEventListeners() {
+    const { inputs } = this._selectedElements();
+
+    inputs.forEach((element) => {
+      element.removeEventListener('change', this._handleChangePeriodStatics);
+    });
+  }
+
   get canvasContext() {
     return this.element.querySelector('.statistic__chart');
   }
 
   getTemplate() {
-    return createStatisticTemplate({data: this._data, rank: this._rank});
+    return createStatisticTemplate({data: this._data, rank: this._rank, topGanre: this._data.getTopGanre });
   }
 }

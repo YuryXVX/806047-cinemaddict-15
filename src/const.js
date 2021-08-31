@@ -37,6 +37,13 @@ export const ModeView = freeze({
   DEFAULT: 'default',
 });
 
+export const TimePeriod = freeze({
+  TODAY: 'today',
+  WEEK: 'week',
+  MONTH: 'month',
+  YEAR: 'year',
+});
+
 export const FILMS_COUNT_PER_STEP = 5;
 
 export const FILMS_COUNT = 35;
