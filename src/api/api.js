@@ -28,7 +28,10 @@ export default class Api {
   getComments(filmID) {
     return this._load({url: `comments/${filmID}`})
       .then((response) => response.json())
-      .then((rawComments) => rawComments.map((rawComment) => new Comment(rawComment)));
+      .then((rawComments) => rawComments.map((rawComment) => new Comment(rawComment)))
+      .catch((err) => {
+        throw Error(err);
+      });
   }
 
   createComment(filmID, comment) {

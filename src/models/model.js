@@ -2,6 +2,7 @@ export default class Model {
   constructor() {
     this._moviesSubscribers = new Set();
     this._commentsSubscribers = new Set();
+    this._filtersSubscribers = new Set();
   }
 
   addDataChangeListener(listener) {
@@ -10,6 +11,14 @@ export default class Model {
 
   removeDataChangeListener(listener) {
     this._moviesSubscribers.delete(listener);
+  }
+
+  addFiltersChangeListener(listener) {
+    this._filtersSubscribers.add(listener);
+  }
+
+  removeFiltersChangeListener(listener) {
+    this._filtersSubscribers.delete(listener);
   }
 
   addCommentsChangeListener(listener) {
@@ -26,5 +35,9 @@ export default class Model {
 
   _notifyCommentObservers() {
     this._commentsSubscribers.forEach((dep) => dep(this));
+  }
+
+  _notifyFilterObservers() {
+    this._filtersSubscribers.forEach((dep) => dep(this));
   }
 }

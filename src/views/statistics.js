@@ -37,11 +37,11 @@ const createStatisticTemplate = ({ rank, data: {watchedFilmsCount, totalDutation
       </li>
       <li class="statistic__text-item">
         <h4 class="statistic__item-title">Total duration</h4>
-        <p class="statistic__item-text">${hour && minute ? `${hour} ${minute}` : '0:00'}</p>
+        <p class="statistic__item-text">${hour} ${minute}</p>
       </li>
       <li class="statistic__text-item">
         <h4 class="statistic__item-title">Top genre</h4>
-        <p class="statistic__item-text">${topGanre ? topGanre : 'No ganre'}</p>
+        <p class="statistic__item-text">${topGanre ? topGanre : ''}</p>
       </li>
     </ul>
 
@@ -127,6 +127,6 @@ export default class StatisticView extends Component {
   }
 
   getTemplate() {
-    return createStatisticTemplate({data: this._data, rank: this._rank, topGanre: this._data.getTopGanre });
+    return createStatisticTemplate({data: this.data, rank: this._rank, topGanre: this.data.getTopGanre });
   }
 }

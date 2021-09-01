@@ -139,11 +139,15 @@ export const getSortFilms = (films ,sortType = SortType.DEFAULT) => {
   }
 };
 
-export const updateFilters = (films, activeFilter) => Object
-  .keys(FilterType)
+export const updateFilters = (films, activeFilter) => Object.keys(FilterType)
   .map((filter) => ({
     name: FilterType[filter],
     count: filter === activeFilter
       ? getFilmsByFilter(films, activeFilter).length
       : getFilmsByFilter(films, filter).length,
   }));
+
+
+export const getTopRatedFilms = (films) => films.slice().sort((a, b) => a.info.totalRating < b.info.totalRating ? 0 : -1);
+
+export const getMostCommentedFilms = (films) => films.slice().sort((a, b) => a.comments.length < b.comments.length ? 0 : -1);

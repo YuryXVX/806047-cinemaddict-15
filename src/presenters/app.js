@@ -15,7 +15,7 @@ import { getFilmsByFilter, getUserRaiting } from '../utils/filters';
 
 export default class App extends RootPresenter {
   constructor({ header, main, footer }, store) {
-    super(store);
+    super(store, { header, main, footer });
     this._isStaticsitcsViewRendered = false;
 
     this._headerContainer = header;
@@ -55,8 +55,8 @@ export default class App extends RootPresenter {
     this._filterView.filters = this._model.updateFilters();
   }
 
-  _handleRaitingChange(value) {
-    this._model.userRating = getUserRaiting(getFilmsByFilter(value, FilterType.HISTORY).length);
+  _handleRaitingChange() {
+    this._model.userRating = getUserRaiting(getFilmsByFilter(this._model.initalFilmsList, FilterType.HISTORY).length);
     this._profileView.raiting = this._model.userRating;
   }
 

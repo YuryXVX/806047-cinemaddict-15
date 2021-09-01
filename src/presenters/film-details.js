@@ -1,4 +1,4 @@
-import { ModeView } from '../const';
+// import { ModeView } from '../const';
 import { classListRemove, deepClone } from '../utils/helpers';
 import { removeElement, render, RenderPosition } from '../utils/render';
 
@@ -14,9 +14,10 @@ import FilmDetailsCommentList from '../views/film-details-list';
 
 // adapters
 import Comment from '../adapters/comment';
+import Film, { toRawFilmModel } from '../adapters/film';
 
 export default class FilmDetailsPresenter extends RootPresenter {
-  constructor(store, onDataChange) {
+  constructor(store) {
     super(store);
     this._filmDetailsView = null;
     this._filmDetailsControls = null;
@@ -29,8 +30,6 @@ export default class FilmDetailsPresenter extends RootPresenter {
     this._data = null;
     this._newData = null;
 
-    this._onDataChange = onDataChange;
-
     this._handleClosePopupKeyDown = this._handleClosePopupKeyDown.bind(this);
     this._handleClosePopup = this._handleClosePopup.bind(this);
 
@@ -39,13 +38,13 @@ export default class FilmDetailsPresenter extends RootPresenter {
     this._handleFavoriteListButton = this._handleFavoriteListButton.bind(this);
     this._handleDeleteComment = this._handleDeleteComment.bind(this);
 
-    this._changedModalData = this._changedModalData.bind(this);
     this._handleCreateComment = this._handleCreateComment.bind(this);
+    this._handleModalChangeData = this._handleModalChangeData.bind(this);
 
-    this._model.addCommentsChangeListener(this._changedModalData);
+    this._model.addCommentsChangeListener(this._handleModalChangeData);
   }
 
-  _changedModalData(data) {
+  _handleModalChangeData(data) {
     const newData = data.films.find((it) => it.id === this.modalId);
 
     this._data = {
@@ -87,7 +86,7 @@ export default class FilmDetailsPresenter extends RootPresenter {
 
   _removePopup() {
     document.removeEventListener('keyup', this._handleClosePopupKeyDown);
-    this._model.removeCommentsChangeListener(this._changedModalData);
+    this._model.removeCommentsChangeListener(this._handleModalChangeData);
 
     classListRemove(document.body, 'hide-overflow');
 
@@ -114,30 +113,42 @@ export default class FilmDetailsPresenter extends RootPresenter {
     this._removePopup();
   }
 
-  setData(newData) {
+  _updateFilmsDetailsData(newData) {
     this._data = newData;
     this._filmDetailsControls.data = newData;
   }
 
-  _handleWatchListButton(data) {
+  _handleWatchListButton() {
     const newData = deepClone(this._data);
     newData.filmDetails.watchlist = !newData.filmDetails.watchlist;
 
-    this._onDataChange(this, data, newData, ModeView.MODAL);
+    this._api.updateFilm(this._data.id, new Film(toRawFilmModel(newData)))
+      .then((films) => {
+        this._model.updateFilm(this._data, films);
+        this._updateFilmsDetailsData(films);
+      });
   }
 
-  _handleFavoriteListButton(data) {
+  _handleFavoriteListButton() {
     const newData = deepClone(this._data);
     newData.filmDetails.favorite = !newData.filmDetails.favorite;
 
-    this._onDataChange(this, data, newData, ModeView.MODAL);
+    this._api.updateFilm(this._data.id, new Film(toRawFilmModel(newData)))
+      .then((films) => {
+        this._model.updateFilm(this._data, films);
+        this._updateFilmsDetailsData(films);
+      });
   }
 
-  _hadleHistoryListButton(data) {
+  _hadleHistoryListButton() {
     const newData = deepClone(this._data);
     newData.filmDetails.history = !newData.filmDetails.history;
 
-    this._onDataChange(this, data, newData, ModeView.MODAL);
+    this._api.updateFilm(this._data.id, new Film(toRawFilmModel(newData)))
+      .then((films) => {
+        this._model.updateFilm(this._data, films);
+        this._updateFilmsDetailsData(films);
+      });
   }
 
   _handleDeleteComment(data) {

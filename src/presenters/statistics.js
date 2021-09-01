@@ -45,8 +45,6 @@ export default class StatisticPresenter {
 
   _handleChangeStatisticView(type) {
     const films = filterFilmsByWatchingDate(this._data.films, type);
-
-
     this._statisticsView.data = getFilmInfoForStatisticsView(films);
     this._renderStatistics(films);
   }

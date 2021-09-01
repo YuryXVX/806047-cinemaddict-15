@@ -70,7 +70,8 @@ export default class FiltersView extends Component {
     }
   }
 
-  _handleChangeView() {
+  _handleChangeView(evt) {
+    evt.preventDefault();
     this.handleChangeView();
   }
 

@@ -3,8 +3,8 @@ import { freeze } from './utils/helpers';
 export const FilterType = freeze({
   ALL: 'All Films',
   WATCHLIST: 'Watchlist',
-  FAVORITE: 'Favorites',
   HISTORY: 'History',
+  FAVORITE: 'Favorites',
 });
 
 export const ProfileRaiting = freeze({

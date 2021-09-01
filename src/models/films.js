@@ -43,13 +43,17 @@ export default class FilmsStore extends Model {
     this._state = Array.from(value);
   }
 
+  get initalFilmsList() {
+    return this._state.films.slice();
+  }
+
   get activeSortButton() {
     return this._activeSortButon;
   }
 
   set activeSortButton(value) {
     this._activeSortButon = value;
-    this._notifyMoviesObservers(this._listeners);
+    this._notifyFilterObservers();
   }
 
   updateFilm(oldData, newData) {
@@ -60,6 +64,7 @@ export default class FilmsStore extends Model {
     }
 
     this._state.films = [].concat(this._state.films.slice(0, index), newData, this._state.films.slice(index + 1));
+    this._notifyMoviesObservers();
 
     return new Promise((resolve) => resolve(newData));
   }
@@ -72,14 +77,14 @@ export default class FilmsStore extends Model {
 
   set filters(value) {
     this._state.filters = value;
-    this._notifyMoviesObservers();
+    this._notifyFilterObservers();
   }
 
   get activeFilter() { return this._acitveFilter; }
 
   set activeFilter(value) {
     this._acitveFilter = value;
-    this._notifyMoviesObservers();
+    this._notifyFilterObservers();
   }
 
   get topRated() { return this._state.topRated; }

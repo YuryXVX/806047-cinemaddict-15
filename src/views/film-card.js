@@ -3,7 +3,7 @@ import { formatReleaseDate, filmDurationCovert } from '../utils/date';
 import { getActiveClassButton } from '../utils/helpers';
 import Component from './component';
 
-const createFilmCardTemplate = ({ comments, filmDetails, info }) => {
+const createFilmCardTemplate = ({ comments, filmDetails, info }, errorState) => {
   const { poster, title, description, genre, totalRating, release: { date }, runtime} = info;
   const { watchlist, history, favorite } = filmDetails;
 
@@ -14,7 +14,7 @@ const createFilmCardTemplate = ({ comments, filmDetails, info }) => {
   const [,,year] = formatReleaseDate(date).split(' ');
 
   return (
-    `<article class="film-card">
+    `<article class="${errorState ? 'shake film-card' : 'film-card'}">
       <h3 class="film-card__title">${title}</h3>
         <p class="film-card__rating">${totalRating}</p>
         <p class="film-card__info">
@@ -38,46 +38,53 @@ export default class FilmCardView extends Component {
   constructor(data) {
     super();
     this._data = data;
+    this._errorState = false;
+
+    this.handleSetWatchFilms = null;
+    this.handleSetHistoryFilms = null;
+    this.handleSetFavoriteFilms = null;
+    this.handleOpenPopup = null;
   }
 
-  setWatchButtonClickHandler(handler) {
-    const watchFilmButton = this.getElement().querySelector(`${PREFIX_CLASS_BUTTON}--add-to-watchlist`);
-    watchFilmButton.addEventListener('click', () => handler(this._data));
+  get errorState() {
+    return this._errorState;
   }
 
-  setAlreadyWatchedButtonClickHandler(handler) {
-    const alreadyWatchedButton = this.getElement().querySelector(`${PREFIX_CLASS_BUTTON}--mark-as-watched`);
-    alreadyWatchedButton.addEventListener('click', () => handler(this._data));
+  _addEventListeners() {
+    this.element.querySelector(`${PREFIX_CLASS_BUTTON}--add-to-watchlist`).addEventListener('click', this.handleSetWatchFilms);
+    this.element.querySelector(`${PREFIX_CLASS_BUTTON}--mark-as-watched`).addEventListener('click', this.handleSetHistoryFilms);
+    this.element.querySelector(`${PREFIX_CLASS_BUTTON}--favorite`).addEventListener('click', this.handleSetFavoriteFilms);
+    this.element.querySelector('.film-card__comments').addEventListener('click', this.handleOpenPopup);
+    this.element.querySelector('.film-card__title').addEventListener('click', this.handleOpenPopup);
+    this.element.querySelector('.film-card__poster').addEventListener('click', this.handleOpenPopup);
   }
 
-  setFavoriteButtonClickHandler(handler) {
-    const favoriteFilmButton = this.getElement().querySelector(`${PREFIX_CLASS_BUTTON}--favorite`);
-    favoriteFilmButton.addEventListener('click', () => handler(this._data));
+  _removeEventListeners() {
+    this.element.querySelector(`${PREFIX_CLASS_BUTTON}--add-to-watchlist`).removeEventListener('click', this.handleSetWatchFilms);
+    this.element.querySelector(`${PREFIX_CLASS_BUTTON}--mark-as-watched`).removeEventListener('click', this.handleSetHistoryFilms);
+    this.element.querySelector(`${PREFIX_CLASS_BUTTON}--favorite`).removeEventListener('click', this.handleSetFavoriteFilms);
+    this.element.querySelector('.film-card__comments').removeEventListener('click', this.handleOpenPopup);
+    this.element.querySelector('.film-card__title').removeEventListener('click', this.handleOpenPopup);
+    this.element.querySelector('.film-card__poster').removeEventListener('click', this.handleOpenPopup);
+  }
+
+  set errorState(newValue) {
+    this._errorState = newValue;
+
+    if(this.element) {
+      this.updateComponent();
+    }
+  }
+
+  _clearErrorState() {
+    if(this.errorState) {
+      setTimeout(() => this.errorState = false, 1000);
+    }
   }
 
   getTemplate() {
-    return createFilmCardTemplate(this._data);
-  }
-
-  setPosterClickHandler(handler) {
-    this.getElement()
-      .querySelector('.film-card__poster')
-      .addEventListener('click', handler);
-  }
-
-  setTitleClickHandler(handler) {
-    this.getElement()
-      .querySelector('.film-card__title')
-      .addEventListener('click', handler);
-  }
-
-  setCommentsLinkClickHandler(handler) {
-    this.getElement()
-      .querySelector('.film-card__comments')
-      .addEventListener('click', (evt) => {
-        evt.preventDefault();
-        handler();
-      });
+    this._clearErrorState();
+    return createFilmCardTemplate(this._data, this.errorState);
   }
 }
 
