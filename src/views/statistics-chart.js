@@ -72,7 +72,6 @@ export default class StatisticChartView extends Component {
   getTemplate() {}
 
   renderChart() {
-
     const labels = Object.keys(this._data);
     const data = Object.values(this._data);
 

@@ -1,6 +1,7 @@
 import Api from '../api/api';
+import { ApiConfig } from '../const';
 
-const api = new Api();
+const api = new Api(ApiConfig.TOKEN, ApiConfig.END_POINT);
 
 export default class RootPresenter {
   constructor(store, containers) {

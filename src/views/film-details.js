@@ -128,17 +128,12 @@ export default class FilmDetails extends Component {
 
   _addEventListeners() {
     this.element.querySelector('form').addEventListener('submit', (evt) => evt.preventDefault());
+    this.element.querySelector('.film-details__close-btn').addEventListener('click', this._handler);
   }
 
-  setCloseButtonClickHandler() {
-    this.getElement()
-      .querySelector('.film-details__close-btn')
-      .addEventListener('click', this._handler);
-  }
 
   _removeEventListeners() {
-    this.getElement()
-      .querySelector('.film-details__close-btn')
-      .removeEventListener('click', this._handler);
+    this.element.querySelector('form').removeEventListener('submit', (evt) => evt.preventDefault());
+    this.element.querySelector('.film-details__close-btn').removeEventListener('click', this._handler);
   }
 }

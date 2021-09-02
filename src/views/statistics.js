@@ -2,7 +2,7 @@ import { filmDurationCovert } from '../utils/date';
 import Component from './component';
 
 const createStatisticTemplate = ({ rank, data: {watchedFilmsCount, totalDutation}, topGanre }) => {
-  const [hour, minute] = filmDurationCovert(totalDutation).split(' ');
+  const {hours, minutes} = filmDurationCovert(totalDutation);
 
   return (`<section class="statistic">
      <p class="statistic__rank">
@@ -37,7 +37,7 @@ const createStatisticTemplate = ({ rank, data: {watchedFilmsCount, totalDutation
       </li>
       <li class="statistic__text-item">
         <h4 class="statistic__item-title">Total duration</h4>
-        <p class="statistic__item-text">${hour} ${minute}</p>
+        <p class="statistic__item-text">${hours ? `${hours}<span class="statistic__item-description">h</span>` : ''} ${minutes ? `${minutes} <span class="statistic__item-description">m</span>`: ''}</p>
       </li>
       <li class="statistic__text-item">
         <h4 class="statistic__item-title">Top genre</h4>

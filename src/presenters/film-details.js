@@ -1,4 +1,3 @@
-// import { ModeView } from '../const';
 import { classListRemove, deepClone } from '../utils/helpers';
 import { removeElement, render, RenderPosition } from '../utils/render';
 
@@ -205,8 +204,6 @@ export default class FilmDetailsPresenter extends RootPresenter {
     this._filmDetailsControls.handleHistoryListButton = this._handleHistoryListButton;
     this._filmDetailsControls.handleFavoriteListButton = this._handleFavoriteListButton;
     this._filmDetailsNewCommentView.handleCreateComment = this._handleCreateComment;
-
-    this._filmDetailsView.setCloseButtonClickHandler();
 
     this._renderCommnents(data.comments);
 

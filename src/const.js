@@ -37,6 +37,13 @@ export const ModeView = freeze({
   DEFAULT: 'default',
 });
 
+export const EmptyListMessages = {
+  ALL: 'There are no movies in our database',
+  WATCHLIST: 'There are no movies in watchlist database',
+  HISTORY: 'There are no movies in history database',
+  FAVORITE: 'There are no movies in favorite database',
+};
+
 export const TimePeriod = freeze({
   TODAY: 'today',
   WEEK: 'week',
@@ -54,6 +61,11 @@ export const HTTPMethod = {
   POST: 'POST',
   PUT: 'PUT',
   DELETE: 'DELETE',
+};
+
+export const ApiConfig = {
+  TOKEN: 'Basic ddsadasewqe1013',
+  END_POINT: 'https://15.ecmascript.pages.academy/cinemaddict/',
 };
 
 export const FILMS_COUNT_PER_STEP = 5;

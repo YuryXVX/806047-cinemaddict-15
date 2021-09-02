@@ -11,7 +11,7 @@ import LoadingView  from '../views/loading';
 import FilmList from './film-list';
 import Statistic from './statistics';
 import RootPresenter from './root-presenter';
-import { getFilmsByFilter, getUserRaiting } from '../utils/filters';
+import { getFilmsByFilter, getUserRaiting, updateFilters } from '../utils/filters';
 
 export default class App extends RootPresenter {
   constructor({ header, main, footer }, store) {
@@ -52,7 +52,8 @@ export default class App extends RootPresenter {
   }
 
   _handleFiltersCountChange() {
-    this._filterView.filters = this._model.updateFilters();
+    const updatedFilters = updateFilters(this._model.initalFilmsList);
+    this._filterView.filters = updatedFilters;
   }
 
   _handleRaitingChange() {
@@ -65,6 +66,7 @@ export default class App extends RootPresenter {
       this._statisticsPresenter.destroy();
       this._renderFilmListPresenter();
     }
+
     this._model.activeFilter = filter;
     this._filterView.activeFilter = filter;
     this._model.activeSortButton = SortType.DEFAULT;

@@ -3,9 +3,9 @@ import Film from '../adapters/film';
 import { SuccessHTTPStatusRange, HTTPMethod } from '../const';
 
 export default class Api {
-  constructor() {
-    this._authorization = 'Basic dXNlckBwYXN';
-    this._endPoint = 'https://15.ecmascript.pages.academy/cinemaddict/';
+  constructor(token, endPoint) {
+    this._authorization = token;
+    this._endPoint = endPoint;
   }
 
   getAllMovies() {

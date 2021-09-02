@@ -1,4 +1,4 @@
-import { FilterType, SortType } from '../const';
+import { SortType } from '../const';
 import { getSortFilms, getFilmsByFilter } from '../utils/filters';
 import Model from './model';
 
@@ -13,8 +13,6 @@ const INITIAL_STATE = {
   commentsList:[],
   films: [],
   filters,
-  mostCommented: [],
-  topRated: [],
   userRating: '',
 };
 
@@ -34,7 +32,10 @@ export default class FilmsStore extends Model {
 
   get films() {
     return getSortFilms(
-      getFilmsByFilter(this._state.films.slice(), this._acitveFilter),
+      getFilmsByFilter(
+        this._state.films.slice(),
+        this._acitveFilter,
+      ),
       this._activeSortButon,
     );
   }
@@ -56,19 +57,6 @@ export default class FilmsStore extends Model {
     this._notifyFilterObservers();
   }
 
-  updateFilm(oldData, newData) {
-    const index = this._getFilmIndexById(oldData.id);
-
-    if(index === -1) {
-      return;
-    }
-
-    this._state.films = [].concat(this._state.films.slice(0, index), newData, this._state.films.slice(index + 1));
-    this._notifyMoviesObservers();
-
-    return new Promise((resolve) => resolve(newData));
-  }
-
   get userRating() { return this._state.userRating; }
 
   set userRating(newValue) { this._state.userRating = newValue; }
@@ -87,29 +75,27 @@ export default class FilmsStore extends Model {
     this._notifyFilterObservers();
   }
 
-  get topRated() { return this._state.topRated; }
-
   get commentsList() { return this._state.commentsList; }
 
   set commentsList(comments) { this._state.commentsList = comments; }
-
-  get mostCommented() { return this._state.mostCommented; }
 
   _getFilmIndexById(filmId) {
     return this._state.films.findIndex((film) => film.id === filmId);
   }
 
-  updateFilters() {
-    return Object.keys(FilterType).map((filter) => ({
-      name: FilterType[filter],
-      count: filter === this._acitveFilter
-        ? getFilmsByFilter(this._state.films, this._acitveFilter).length
-        : getFilmsByFilter(this._state.films, filter).length,
-    }));
-  }
-
   _updateFilmList(index, newItem) {
     this._state.films = [].concat(this._state.films.slice(0, index), newItem, this._state.films.slice(index + 1));
+  }
+
+  updateFilm(oldData, newData) {
+    const index = this._getFilmIndexById(oldData.id);
+
+    if(index === -1) {
+      return;
+    }
+
+    this._updateFilmList(index, newData);
+    this._notifyMoviesObservers();
   }
 
   deleteComment(filmId, commentId) {

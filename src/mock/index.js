@@ -1,7 +1,5 @@
 // import { FilterType, ProfileRaiting } from '../const';
 // import { getFilmsMockData, getCommentMockData } from './films';
-
-
 // export const getFilmsData = (filmCount) => {
 //   const films = getFilmsMockData(filmCount);
 //   const commentsList = getCommentMockData();

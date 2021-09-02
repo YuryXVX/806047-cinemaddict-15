@@ -1,29 +1,34 @@
 import { PREFIX_CLASS_BUTTON } from '../const';
 import { formatReleaseDate, filmDurationCovert } from '../utils/date';
-import { getActiveClassButton } from '../utils/helpers';
+import { getActiveClassButton, getShortDescription } from '../utils/helpers';
 import Component from './component';
 
 const createFilmCardTemplate = ({ comments, filmDetails, info }, errorState) => {
   const { poster, title, description, genre, totalRating, release: { date }, runtime} = info;
   const { watchlist, history, favorite } = filmDetails;
 
+  const { hours, minutes } = filmDurationCovert(runtime);
   const isActiveWatchListButton = getActiveClassButton(watchlist);
   const isAlreadyWatchedButton = getActiveClassButton(history);
   const isActiveFavoriteButton = getActiveClassButton(favorite);
+  const humanizedDescription = getShortDescription(description);
+  const humanizedDuration = `${hours}h ${minutes}m`;
 
   const [,,year] = formatReleaseDate(date).split(' ');
+
 
   return (
     `<article class="${errorState ? 'shake film-card' : 'film-card'}">
       <h3 class="film-card__title">${title}</h3>
         <p class="film-card__rating">${totalRating}</p>
         <p class="film-card__info">
-          <span class="film-card__year">${ year }</span>
-          <span class="film-card__duration">${ filmDurationCovert(runtime) }</span>
+          <span class="film-card__year">${year}</span>
+         
+          <span class="film-card__duration">${humanizedDuration}</span>
           <span class="film-card__genre">${genre.join(' ')}</span>
         </p>
         <img src="${poster}" alt="" class="film-card__poster">
-        <p class="film-card__description">${description}</p>
+        <p class="film-card__description">${humanizedDescription}</p>
         <a class="film-card__comments"> ${comments.length} comments</a>
         <div class="film-card__controls">
           <button class="film-card__controls-item film-card__controls-item--add-to-watchlist ${isActiveWatchListButton}" type="button">Add to watchlist</button>

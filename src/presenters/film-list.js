@@ -1,4 +1,4 @@
-import { FILMS_COUNT_PER_STEP, SortType } from '../const';
+import { EmptyListMessages, FILMS_COUNT_PER_STEP, SortType } from '../const';
 import { render, RenderPosition, removeElement } from '../utils/render';
 import { getFilmPresenters } from './film';
 import RootPresenter from './root-presenter';
@@ -47,6 +47,7 @@ export default class FilmListPresenter extends RootPresenter {
     this._handleDataChange = this._handleDataChange.bind(this);
     this._handleRenderFilmDetailsPopup = this._renderFilmDetailsPopup.bind(this);
     this._handleChangeSortData = this._handleChangeSortData.bind(this);
+    this._handleLoadMoreFilms = this._handleLoadMoreFilms.bind(this);
 
     this._handleRatingChange = handleRaitingChange;
     this._handleFiltersCountChange = handleFiltersCountChange;
@@ -56,7 +57,7 @@ export default class FilmListPresenter extends RootPresenter {
 
   filtered({ films }) {
     this._updateViewOnChangeFilters({ films });
-    this._updateFilms(FILMS_COUNT_PER_STEP, films);
+    this._updateFilms(FILMS_COUNT_PER_STEP);
   }
 
   rerender({ films }) {
@@ -235,7 +236,7 @@ export default class FilmListPresenter extends RootPresenter {
 
     const container = this._filmListView.getElement();
 
-    this._noFilmsMessageView = new NoFilmsMessage();
+    this._noFilmsMessageView = new NoFilmsMessage(EmptyListMessages[this._model.activeFilter]);
 
     render(container, this._noFilmsMessageView.getElement(), RenderPosition.AFTERBEGIN);
   }
@@ -253,10 +254,10 @@ export default class FilmListPresenter extends RootPresenter {
 
     render(this._filmListView.getElement(), this._showMoreButton.getElement(), RenderPosition.BEFOREEND);
 
-    this._showMoreButton.setShowMoreButtonClickHandler(this._onLoadMoreButtonClick.bind(this));
+    this._showMoreButton.handleShowMore = this._handleLoadMoreFilms;
   }
 
-  _onLoadMoreButtonClick() {
+  _handleLoadMoreFilms() {
     const prevFilmsCount = this._showFilmsCount;
     const films = this._model.films;
 

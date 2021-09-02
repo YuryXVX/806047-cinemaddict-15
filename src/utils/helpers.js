@@ -11,3 +11,5 @@ export const classListAdd = (element, className) => element.classList.add(classN
 export const classListRemove = (element, className) => element.classList.remove(className);
 
 export const deepClone = (target) => JSON.parse(JSON.stringify(target));
+
+export const getShortDescription = (description) => description.length > 140 ? `${description.slice(0, 139)}...` : description;

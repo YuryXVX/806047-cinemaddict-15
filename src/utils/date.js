@@ -1,5 +1,4 @@
 import dayjs from 'dayjs';
-
 // eslint-disable-next-line no-undef
 const relativeTime = require('dayjs/plugin/relativeTime');
 
@@ -13,8 +12,9 @@ export const filmDurationCovert = (num) => {
   const rhours = Math.floor(hours);
   const minutes = (hours - rhours) * 60;
   const rminutes = Math.round(minutes);
-  const lessHour = rhours !== 0 ? `${rhours}h` : '';
-  const lessMinutes = minutes !== 0 ? `${rminutes}m` : '';
-  return `${lessHour} ${lessMinutes}`;
+  const lessHour = rhours !== 0 ? `${rhours}` : '';
+  const lessMinutes = minutes !== 0 ? `${rminutes}` : '';
+
+  return { hours: lessHour, minutes: lessMinutes };
 };
 
