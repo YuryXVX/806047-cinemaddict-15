@@ -25,6 +25,7 @@ const createFilmDetailsTemplate = ({ comments, info }) => {
 
 
   const genresListTemplate = createGenreListTemplate(genre);
+  const { hours, minutes } = filmDurationCovert(runtime);
 
   return `<section class="film-details">
   <form class="film-details__inner" action="" method="get">
@@ -70,7 +71,7 @@ const createFilmDetailsTemplate = ({ comments, info }) => {
             </tr>
             <tr class="film-details__row">
               <td class="film-details__term">Runtime</td>
-              <td class="film-details__cell">${filmDurationCovert(runtime)}</td>
+              <td class="film-details__cell">${hours}h ${minutes}m</td>
             </tr>
             <tr class="film-details__row">
               <td class="film-details__term">Country</td>

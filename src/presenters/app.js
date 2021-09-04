@@ -14,8 +14,8 @@ import RootPresenter from './root-presenter';
 import { getFilmsByFilter, getUserRaiting, updateFilters } from '../utils/filters';
 
 export default class App extends RootPresenter {
-  constructor({ header, main, footer }, store, api) {
-    super(store, api);
+  constructor({ header, main, footer }, model, api) {
+    super(model, api);
     this._isStaticsitcsViewRendered = false;
 
     this._headerContainer = header;
@@ -34,21 +34,23 @@ export default class App extends RootPresenter {
 
     this._filmListPresenter = new FilmList(this._model, this._handleRaitingChange, this._handleFiltersCountChange, api);
     this._statisticsPresenter = new Statistic();
-  }
 
-  beforeRender() {
     this._renderDefaultLayout();
   }
 
   _renderDefaultLayout() {
     this._renderHeaderComponent();
     this._renderFilterComponent(this._model.activeFilter, this._model.filters);
-
-    this._loadingView = new LoadingView();
-
-    render(this._mainContainer, this._loadingView.getElement(), RenderPosition.BEFOREEND);
-
     this._renderFooterComponent();
+  }
+
+  _removeLoader() {
+    removeElement(this._loadingView);
+  }
+
+  _renderLoader() {
+    this._loadingView = new LoadingView();
+    render(this._mainContainer, this._loadingView.getElement(), RenderPosition.BEFOREEND);
   }
 
   _handleFiltersCountChange() {
@@ -82,27 +84,26 @@ export default class App extends RootPresenter {
   }
 
   _renderFilmListPresenter() {
-    this._isStaticsitcsViewRendered = false;
-
     if(this._loadingView) {
-      removeElement(this._loadingView);
+      this._removeLoader();
     }
 
-    this._loadingView = null;
-
+    this._isStaticsitcsViewRendered = false;
     this._filmListPresenter.render({ container: this._mainContainer, filters: this._filterView });
   }
 
   _updateDefaultLayout() {
-    this._footerView.filmsCount = this._model.films.length;
-    this._handleFiltersCountChange();
     this._handleRaitingChange(this._model.films);
+    this._footerView.filmsCount = this._model.films.length || 0;
+    this._handleFiltersCountChange();
   }
 
   render() {
+    this._renderLoader();
     this._updateDefaultLayout();
     this._renderFilmListPresenter();
   }
+
 
   _renderHeaderComponent() {
     this._profileView = new Profile(this._model.userRating);

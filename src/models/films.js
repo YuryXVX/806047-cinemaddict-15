@@ -9,7 +9,7 @@ const INITIAL_STATE = {
   userRating: '',
 };
 
-export default class FilmsStore extends Model {
+export default class FilmsModel extends Model {
   constructor(state = INITIAL_STATE) {
     super();
     this._state = state;

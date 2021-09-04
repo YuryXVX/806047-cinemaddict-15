@@ -155,7 +155,7 @@ export default class FilmDetailsPresenter extends RootPresenter {
 
     commentView.isDisabledDeleteButton = true;
 
-    this._api.deleteComment(data.id)
+    this._api.deleteComment(this.modalId, data.id)
       .then(() => {
         this._model.deleteComment(this.modalId, data.id);
       })

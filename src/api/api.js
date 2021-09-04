@@ -10,7 +10,6 @@ export default class Api {
 
   getAllFilms() {
     return this._load({ url: 'movies'})
-      .then((response) => response.json())
       .then((raw) => raw.map((it) => new Film(it)));
   }
 
@@ -21,13 +20,11 @@ export default class Api {
       body: JSON.stringify(film.getRaw()),
       headers: new Headers({'Content-Type': 'application/json'}),
     })
-      .then((response) => response.json())
       .then((rawFilm) => new Film(rawFilm));
   }
 
   getComments(filmID) {
     return this._load({url: `comments/${filmID}`})
-      .then((response) => response.json())
       .then((rawComments) => rawComments.map((rawComment) => new Comment(rawComment)))
       .catch((err) => {
         throw Error(err);
@@ -41,7 +38,6 @@ export default class Api {
       body: JSON.stringify(comment.getRaw()),
       headers: new Headers({'Content-Type': 'application/json'}),
     })
-      .then((response) => response.json())
       .then(({comments: rawComments}) => rawComments.map((rawComment) => new Comment(rawComment)));
   }
 
@@ -52,11 +48,26 @@ export default class Api {
     });
   }
 
+  sync(films) {
+    return this._load({
+      url: 'movies/sync',
+      method: HTTPMethod.POST,
+      body: JSON.stringify(films.map((film) => film.getRaw())),
+      headers: new Headers({'Content-Type': 'application/json'}),
+    })
+      .then(({updated: updatedFilms}) => updatedFilms.map((updatedFilm) => new Film(updatedFilm)));
+  }
+
   _load({url, method = HTTPMethod.GET, body = null, headers = new Headers()}) {
     headers.append('Authorization', this._authorization);
     return fetch(`${this._endPoint}/${url}`, {method, body, headers})
       .then(Api.checkStatus)
+      .then(Api.toJson)
       .catch(Api.catchError);
+  }
+
+  static toJson(respose) {
+    return respose.json();
   }
 
   static checkStatus(response) {

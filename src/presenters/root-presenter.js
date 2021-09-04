@@ -6,8 +6,6 @@ export default class RootPresenter {
     this._api = api;
     this._rerender = this.rerender.bind(this);
     this._filtered = this.filtered.bind(this);
-
-    setTimeout(() => this.beforeRender(), 0);
   }
 
   filtered() {}
@@ -17,9 +15,6 @@ export default class RootPresenter {
   renderToast(message) {
     toast(message);
   }
-
-  beforeRender() {}
-
 
   render() {
     this._model.addDataChangeListener(this._rerender);

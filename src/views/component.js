@@ -23,7 +23,9 @@ export default class Component {
   }
 
   updateComponent() {
-    this._rerenderElement();
+    if(this.element) {
+      this._rerenderElement();
+    }
   }
 
   getElement() {
