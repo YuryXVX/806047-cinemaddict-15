@@ -1,47 +1,32 @@
-import { SortType } from '../const';
+import { SortType, FilterForInitialStateApp } from '../const';
 import { getSortFilms, getFilmsByFilter } from '../utils/filters';
 import Model from './model';
-
-const filters = [
-  {name: 'All Films', count: 0},
-  {name: 'Watchlist', count: 0},
-  {name: 'Favorites', count: 0},
-  {name: 'History', count: 0},
-];
 
 const INITIAL_STATE = {
   commentsList:[],
   films: [],
-  filters,
+  filters: FilterForInitialStateApp,
   userRating: '',
 };
 
 export default class FilmsStore extends Model {
-  constructor(films = INITIAL_STATE) {
+  constructor(state = INITIAL_STATE) {
     super();
-    this._state = films;
-
+    this._state = state;
     this._activeSortButon = SortType.DEFAULT;
-
     this._acitveFilter = 'ALL';
   }
 
-  setState(movies) {
-    this._state.films = movies;
+  setState(films) {
+    this._state.films = films;
   }
 
   get films() {
-    return getSortFilms(
-      getFilmsByFilter(
-        this._state.films.slice(),
-        this._acitveFilter,
-      ),
-      this._activeSortButon,
-    );
+    return getSortFilms(getFilmsByFilter(this._state.films.slice(), this._acitveFilter), this._activeSortButon);
   }
 
-  set films(value) {
-    this._state = Array.from(value);
+  set films(newFilms) {
+    this._state.films = Array.from(newFilms);
   }
 
   get initalFilmsList() {
@@ -52,26 +37,26 @@ export default class FilmsStore extends Model {
     return this._activeSortButon;
   }
 
-  set activeSortButton(value) {
-    this._activeSortButon = value;
+  set activeSortButton(activeSortType) {
+    this._activeSortButon = activeSortType;
     this._notifyFilterObservers();
   }
 
   get userRating() { return this._state.userRating; }
 
-  set userRating(newValue) { this._state.userRating = newValue; }
+  set userRating(newUserRaiting) { this._state.userRating = newUserRaiting; }
 
   get filters() { return this._state.filters; }
 
-  set filters(value) {
-    this._state.filters = value;
+  set filters(filterType) {
+    this._state.filters = filterType;
     this._notifyFilterObservers();
   }
 
   get activeFilter() { return this._acitveFilter; }
 
-  set activeFilter(value) {
-    this._acitveFilter = value;
+  set activeFilter(activeFilter) {
+    this._acitveFilter = activeFilter;
     this._notifyFilterObservers();
   }
 
@@ -101,9 +86,8 @@ export default class FilmsStore extends Model {
   deleteComment(filmId, commentId) {
     const { films } = this._state;
     const index = this._getFilmIndexById(filmId);
-    const commentIndex = films[index].comments.findIndex((comment) => comment === commentId);
 
-    films[index].comments.splice(commentIndex, 1);
+    films[index].comments = this.films[index].comments.filter((comment) => comment !== commentId);
 
     this._updateFilmList(index, films[index]);
 

@@ -9,7 +9,6 @@ export default class NoFilmsMessageView extends Component {
     this._text = text || 'There are no movies in our database';
   }
 
-
   getTemplate() {
     return noFilmsMessageTemplate(this._text);
   }

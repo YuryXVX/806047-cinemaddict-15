@@ -16,13 +16,13 @@ import Comment from '../adapters/comment';
 import Film, { toRawFilmModel } from '../adapters/film';
 
 export default class FilmDetailsPresenter extends RootPresenter {
-  constructor(store) {
-    super(store);
-    this._filmDetailsView = null;
-    this._filmDetailsControls = null;
-    this._filmDetailsNewCommentView = null;
-    this._filmDetailsCommnentViews = null;
-    this._filmDetailsCommnentListView = new FilmDetailsCommentList();
+  constructor(store, api) {
+    super(store, api);
+    this._detailsView = null;
+    this._detailsControls = null;
+    this._detailsNewCommentView = null;
+    this._detailsCommnentViews = null;
+    this._detailsCommnentContainerView = new FilmDetailsCommentList();
 
     this._id = null;
 
@@ -33,7 +33,7 @@ export default class FilmDetailsPresenter extends RootPresenter {
     this._handleClosePopup = this._handleClosePopup.bind(this);
 
     this._handleWatchListButton = this._handleWatchListButton.bind(this);
-    this._handleHistoryListButton = this._hadleHistoryListButton.bind(this);
+    this._handleHistoryListButton = this._handleHistoryListButton.bind(this);
     this._handleFavoriteListButton = this._handleFavoriteListButton.bind(this);
     this._handleDeleteComment = this._handleDeleteComment.bind(this);
 
@@ -53,7 +53,7 @@ export default class FilmDetailsPresenter extends RootPresenter {
 
 
     this._updateComments(this._data.comments);
-    this._filmDetailsView.updateCommentCountElement(this._data.comments.length);
+    this._detailsView.updateCommentCountElement(this._data.comments.length);
   }
 
 
@@ -68,18 +68,18 @@ export default class FilmDetailsPresenter extends RootPresenter {
   _handleCreateComment(payload) {
     const newComment = new Comment(payload);
 
-    this._filmDetailsNewCommentView.disabledForm = true;
+    this._detailsNewCommentView.disabledForm = true;
 
     this._api.createComment(this.modalId, newComment)
       .then((res) => {
         this._model.createComment(this.modalId, res);
-        this._filmDetailsNewCommentView.disabledForm = false;
+        this._detailsNewCommentView.disabledForm = false;
       })
       .catch(() => {
-        this._filmDetailsNewCommentView.errorState = true;
+        this._detailsNewCommentView.errorState = true;
       })
       .finally(() => {
-        this._filmDetailsNewCommentView.disabledForm = false;
+        this._detailsNewCommentView.disabledForm = false;
       });
   }
 
@@ -89,14 +89,14 @@ export default class FilmDetailsPresenter extends RootPresenter {
 
     classListRemove(document.body, 'hide-overflow');
 
-    if(this._filmDetailsView) {
-      removeElement(this._filmDetailsView);
-      removeElement(this._filmDetailsNewCommentView);
-      removeElement(this._filmDetailsControls);
+    if(this._detailsView) {
+      removeElement(this._detailsView);
+      removeElement(this._detailsNewCommentView);
+      removeElement(this._detailsControls);
 
-      this._filmDetailsView = null;
-      this._filmDetailsControls = null;
-      this._filmDetailsNewCommentView = null;
+      this._detailsView = null;
+      this._detailsControls = null;
+      this._detailsNewCommentView = null;
     }
   }
 
@@ -114,7 +114,7 @@ export default class FilmDetailsPresenter extends RootPresenter {
 
   _updateFilmsDetailsData(newData) {
     this._data = newData;
-    this._filmDetailsControls.data = newData;
+    this._detailsControls.data = newData;
   }
 
   _handleWatchListButton() {
@@ -139,7 +139,7 @@ export default class FilmDetailsPresenter extends RootPresenter {
       });
   }
 
-  _hadleHistoryListButton() {
+  _handleHistoryListButton() {
     const newData = deepClone(this._data);
     newData.filmDetails.history = !newData.filmDetails.history;
 
@@ -151,7 +151,7 @@ export default class FilmDetailsPresenter extends RootPresenter {
   }
 
   _handleDeleteComment(data) {
-    const commentView = this._filmDetailsCommnentViews.find((view) => view.id === data.id);
+    const commentView = this._detailsCommnentViews.find((view) => view.id === data.id);
 
     commentView.isDisabledDeleteButton = true;
 
@@ -169,7 +169,7 @@ export default class FilmDetailsPresenter extends RootPresenter {
 
 
   _removeCommentList() {
-    this._filmDetailsCommnentViews.forEach((filmView) => filmView.destroyElement());
+    this._detailsCommnentViews.forEach((filmView) => filmView.destroyElement());
   }
 
   _updateComments(comments) {
@@ -178,10 +178,10 @@ export default class FilmDetailsPresenter extends RootPresenter {
   }
 
   _renderCommnents(comments) {
-    this._filmDetailsCommnentViews = comments.map((comment) => {
+    this._detailsCommnentViews = comments.map((comment) => {
       const commentView = new FilmsDetailsComment(comment, this._handleDeleteComment);
       commentView.handleDeleteComment = this._handleDeleteComment;
-      render(this._filmDetailsCommnentListView.element, commentView.getElement(), RenderPosition.BEFOREEND);
+      render(this._detailsCommnentContainerView.element, commentView.getElement(), RenderPosition.BEFOREEND);
       return commentView;
     });
   }
@@ -190,23 +190,23 @@ export default class FilmDetailsPresenter extends RootPresenter {
     this._data = data;
     this._id = data.id;
 
-    this._filmDetailsView = new FilmDetails(data, this._handleClosePopup);
-    this._filmDetailsControls = new FilmDetailsControls(data);
-    this._filmDetailsNewCommentView = new FilmDetailsNewCommentView();
+    this._detailsView = new FilmDetails(data, this._handleClosePopup);
+    this._detailsControls = new FilmDetailsControls(data);
+    this._detailsNewCommentView = new FilmDetailsNewCommentView();
 
     document.addEventListener('keyup', this._handleClosePopupKeyDown);
 
-    render(this._filmDetailsView.filmListDetailsContainer, this._filmDetailsControls.getElement(), RenderPosition.BEFOREEND);
-    render(this._filmDetailsView.filmsDetailsCommentWrap, this._filmDetailsCommnentListView.element, RenderPosition.BEFOREEND);
-    render(this._filmDetailsView.filmsDetailsCommentWrap, this._filmDetailsNewCommentView.getElement(), RenderPosition.BEFOREEND);
+    render(this._detailsView.filmListDetailsContainer, this._detailsControls.getElement(), RenderPosition.BEFOREEND);
+    render(this._detailsView.filmsDetailsCommentWrap, this._detailsCommnentContainerView.element, RenderPosition.BEFOREEND);
+    render(this._detailsView.filmsDetailsCommentWrap, this._detailsNewCommentView.getElement(), RenderPosition.BEFOREEND);
 
-    this._filmDetailsControls.handleWatchListButton = this._handleWatchListButton;
-    this._filmDetailsControls.handleHistoryListButton = this._handleHistoryListButton;
-    this._filmDetailsControls.handleFavoriteListButton = this._handleFavoriteListButton;
-    this._filmDetailsNewCommentView.handleCreateComment = this._handleCreateComment;
+    this._detailsControls.handleWatchListButton = this._handleWatchListButton;
+    this._detailsControls.handleHistoryListButton = this._handleHistoryListButton;
+    this._detailsControls.handleFavoriteListButton = this._handleFavoriteListButton;
+    this._detailsNewCommentView.handleCreateComment = this._handleCreateComment;
 
     this._renderCommnents(data.comments);
 
-    render(document.body, this._filmDetailsView.getElement(), RenderPosition.BEFOREEND);
+    render(document.body, this._detailsView.getElement(), RenderPosition.BEFOREEND);
   }
 }

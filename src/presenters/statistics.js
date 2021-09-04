@@ -1,4 +1,4 @@
-import { getFilmInfoForStatisticsView, getFimsCountByGenre, filterFilmsByWatchingDate } from '../utils/filters';
+import { getFilmInfoForStatisticsView, getFilmsCountByGenre, filterFilmsByWatchingDate } from '../utils/filters';
 import { render, RenderPosition } from '../utils/render';
 import StatisticView from '../views/statistics';
 import StatisticChartView from '../views/statistics-chart';
@@ -31,7 +31,7 @@ export default class StatisticPresenter {
   }
 
   _renderStatistics(films) {
-    const dataForStatisticChart = getFimsCountByGenre(films);
+    const dataForStatisticChart = getFilmsCountByGenre(films);
     this._stastisticsChartView = new StatisticChartView(this._statisticsView.canvasContext, dataForStatisticChart);
     this._stastisticsChartView.renderChart();
   }

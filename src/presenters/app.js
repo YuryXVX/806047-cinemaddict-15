@@ -14,8 +14,8 @@ import RootPresenter from './root-presenter';
 import { getFilmsByFilter, getUserRaiting, updateFilters } from '../utils/filters';
 
 export default class App extends RootPresenter {
-  constructor({ header, main, footer }, store) {
-    super(store, { header, main, footer });
+  constructor({ header, main, footer }, store, api) {
+    super(store, api);
     this._isStaticsitcsViewRendered = false;
 
     this._headerContainer = header;
@@ -32,7 +32,7 @@ export default class App extends RootPresenter {
     this._handleFiltersCountChange = this._handleFiltersCountChange.bind(this);
     this._handleDestroyFilmListPresentor = this._handleDestroyFilmListPresentor.bind(this);
 
-    this._filmListPresenter = new FilmList(this._model, this._handleRaitingChange, this._handleFiltersCountChange);
+    this._filmListPresenter = new FilmList(this._model, this._handleRaitingChange, this._handleFiltersCountChange, api);
     this._statisticsPresenter = new Statistic();
   }
 
@@ -93,14 +93,14 @@ export default class App extends RootPresenter {
     this._filmListPresenter.render({ container: this._mainContainer, filters: this._filterView });
   }
 
-  _updated() {
+  _updateDefaultLayout() {
     this._footerView.filmsCount = this._model.films.length;
     this._handleFiltersCountChange();
     this._handleRaitingChange(this._model.films);
   }
 
   render() {
-    this._updated();
+    this._updateDefaultLayout();
     this._renderFilmListPresenter();
   }
 

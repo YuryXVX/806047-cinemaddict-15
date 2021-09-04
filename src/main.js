@@ -12,9 +12,9 @@ import { ApiConfig } from './const';
 
 const api = new Api(ApiConfig.TOKEN, ApiConfig.END_POINT);
 const store = new FilmsStore();
-const app = new AppPresenter(containers, store);
+const app = new AppPresenter(containers, store, api);
 
-api.getAllMovies()
+api.getAllFilms()
   .then((movies) => {
     store.setState(movies);
     app.render();
@@ -22,4 +22,9 @@ api.getAllMovies()
   .catch(() => {
     store.setState([]);
     app.render();
+    app.renderToast('there was an error getting movies');
   });
+
+window.addEventListener('load', () => {
+  navigator.serviceWorker.register('/sw.js');
+});

@@ -1,21 +1,28 @@
 import { TimePeriod, ProfileRaiting, SortType, FilterType } from '../const';
 
-const toArrayFilmsToMapGanre = (target) => target.reduce((r, [k, v]) => ({ ...r, [k]: v }), {});
-const sortedMapByMaxCount = (target) => (Object.entries(target).sort(([, a], [, b]) => b - a));
+const RaitingCount = {
+  novice: (filmsCount) => filmsCount >= 1 && filmsCount <= 10,
+  fan: (filmsCount) => filmsCount >= 11 && filmsCount <= 20,
+  modeBuff: (filmsCount) => filmsCount >= 21,
+};
 
-export const getFimsCountByGenre = (films) => {
-  const currentGenreMap = films.reduce((acc, it) => {
-    const current = it.info.genre;
+const arrayToMapGanre = (target) => target.reduce((ganreMap, [ganreName, ganreValue]) => ({ ...ganreMap, [ganreName]: ganreValue }), {});
+const sortedMapByMaxCount = (target) => (Object.entries(target).sort(([, valueA], [, valueB]) => valueB - valueA));
 
-    current.forEach((c) => {
-      acc[c] = 0;
+export const getFilmsCountByGenre = (films) => {
+  const currentGenreMap = films.reduce((ganreMap, film) => {
+    const current = film.info.genre;
+
+    current.forEach((ganre) => {
+      ganreMap[ganre] = 0;
     });
 
-    return acc;
+    return ganreMap;
   }, {});
 
   films.forEach((film) => {
     const { info: { genre } } = film;
+
     genre.forEach((it) => {
       if(currentGenreMap[it]) {
         currentGenreMap[it]++;
@@ -25,14 +32,14 @@ export const getFimsCountByGenre = (films) => {
     });
   });
 
-  return toArrayFilmsToMapGanre(sortedMapByMaxCount(currentGenreMap));
+  return arrayToMapGanre(sortedMapByMaxCount(currentGenreMap));
 };
 
 const getTopGanre = (films) => {
   if(!films.length) {
     return;
   }
-  const ganreMap = getFimsCountByGenre(films);
+  const ganreMap = getFilmsCountByGenre(films);
 
   const ganre = Object.keys(ganreMap)[0];
 
@@ -59,28 +66,29 @@ export const filterFilmsByWatchingDate = (films, timePeriod) => {
   let dateToCompare;
 
   switch (timePeriod) {
-    case TimePeriod.TODAY:
+    case TimePeriod.TODAY: {
       dateToCompare = new Date(currentYear, currentMonth, currentMonthDay);
-
       break;
+    }
 
-    case TimePeriod.WEEK:
+    case TimePeriod.WEEK: {
       dateToCompare = new Date(currentYear, currentMonth, currentMonthDay - 7, currentHours, currentMinutes, currentSeconds, currentMilliseconds);
-
       break;
+    }
 
-    case TimePeriod.MONTH:
+    case TimePeriod.MONTH: {
       dateToCompare = new Date(currentYear, currentMonth - 1, currentMonthDay, currentHours, currentMinutes, currentSeconds, currentMilliseconds);
-
       break;
+    }
 
-    case TimePeriod.YEAR:
+    case TimePeriod.YEAR: {
       dateToCompare = new Date(currentYear - 1, currentMonth, currentMonthDay, currentHours, currentMinutes, currentSeconds, currentMilliseconds);
-
       break;
+    }
 
-    default:
+    default: {
       dateToCompare = null;
+    }
   }
 
   if (!dateToCompare) {
@@ -98,7 +106,6 @@ export const filterFilmsByWatchingDate = (films, timePeriod) => {
   });
 };
 
-
 export const getFilmsByFilter = (films, filter) => {
   if(filter === 'ALL') {
     return films;
@@ -108,15 +115,15 @@ export const getFilmsByFilter = (films, filter) => {
 };
 
 export const getUserRaiting = (filmsCount) => {
-  if(filmsCount >= 1 && filmsCount <= 10) {
+  if(RaitingCount.novice(filmsCount)) {
     return ProfileRaiting.NOVICE;
   }
 
-  if(filmsCount >= 11 && filmsCount <= 20) {
+  if(RaitingCount.fan(filmsCount)) {
     return ProfileRaiting.FAN;
   }
 
-  if(filmsCount >= 21) {
+  if(RaitingCount.modeBuff(filmsCount)) {
     return ProfileRaiting.MORE_BUFF;
   }
 

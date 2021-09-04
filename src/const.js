@@ -7,6 +7,8 @@ export const FilterType = freeze({
   FAVORITE: 'Favorites',
 });
 
+export const FilterForInitialStateApp = Object.values(FilterType).map((name) => ({ name, count: 0}));
+
 export const ProfileRaiting = freeze({
   NOVICE: 'novice',
   FAN: 'fan',

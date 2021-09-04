@@ -8,7 +8,7 @@ export default class Api {
     this._endPoint = endPoint;
   }
 
-  getAllMovies() {
+  getAllFilms() {
     return this._load({ url: 'movies'})
       .then((response) => response.json())
       .then((raw) => raw.map((it) => new Film(it)));
