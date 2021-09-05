@@ -29,7 +29,7 @@ export default class FilmsModel extends Model {
     this._state.films = Array.from(newFilms);
   }
 
-  get initalFilmsList() {
+  get initialFilmsList() {
     return this._state.films.slice();
   }
 

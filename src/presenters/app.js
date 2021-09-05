@@ -55,11 +55,11 @@ export default class App extends RootPresenter {
   }
 
   _handleFiltersCountChange() {
-    this._filterView.filters = updateFilters(this._model.initalFilmsList);
+    this._filterView.filters = updateFilters(this._model.initialFilmsList);
   }
 
   _handleRatingChange() {
-    this._model.userRating = getUserRating(getFilmsByFilter(this._model.initalFilmsList, FilterType.HISTORY).length);
+    this._model.userRating = getUserRating(getFilmsByFilter(this._model.initialFilmsList, FilterType.HISTORY).length);
     this._profileView.rating = this._model.userRating;
   }
 

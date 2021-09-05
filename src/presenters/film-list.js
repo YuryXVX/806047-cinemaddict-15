@@ -157,7 +157,7 @@ export default class FilmListPresenter extends RootPresenter {
   }
 
   _renderMostCommentedFilms() {
-    const mostCommentFilms = getMostCommentedFilms(this._model.initalFilmsList).slice(0, 2);
+    const mostCommentFilms = getMostCommentedFilms(this._model.initialFilmsList).slice(0, 2);
 
     if(!mostCommentFilms.length) {
       return;
@@ -177,7 +177,7 @@ export default class FilmListPresenter extends RootPresenter {
   }
 
   _renderTopRatedFilms() {
-    const topRatedFilms = getTopRatedFilms(this._model.initalFilmsList).slice(0, 2);
+    const topRatedFilms = getTopRatedFilms(this._model.initialFilmsList).slice(0, 2);
 
     if(!topRatedFilms.length) {
       return;
@@ -191,7 +191,7 @@ export default class FilmListPresenter extends RootPresenter {
   }
 
   _updateMostCommentedFilms() {
-    const mostCommentedFilms = getMostCommentedFilms(this._model.initalFilmsList).slice(0, 2);
+    const mostCommentedFilms = getMostCommentedFilms(this._model.initialFilmsList).slice(0, 2);
 
     if(!mostCommentedFilms.length) {
       removeElement(this._filmsMostCommentedSectionView);
@@ -208,7 +208,7 @@ export default class FilmListPresenter extends RootPresenter {
 
   _updateTopRatedFilms() {
     this._destroyFilmPresenters(this._filmsTopRatedPresenters);
-    const topRatedFilms = getTopRatedFilms(this._model.initalFilmsList).slice(0, 2);
+    const topRatedFilms = getTopRatedFilms(this._model.initialFilmsList).slice(0, 2);
 
     this._renderTopFilms(topRatedFilms);
   }

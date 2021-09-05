@@ -58,10 +58,6 @@ export default class Film {
     };
   }
 
-  clone(raw) {
-    return new Film(raw);
-  }
-
   _hasCommentIds(comments) {
     return comments.some((comment) => typeof comment !== 'string');
   }
