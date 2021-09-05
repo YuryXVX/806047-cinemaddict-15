@@ -3,11 +3,11 @@ import { formatDuration } from '../utils/date';
 import Component from './component';
 import he from 'he';
 
-const cretateCommentTemplate = (data) => {
+const cretateCommentTemplate = (data, isDisabledDeleteButton = false, isErrorState = false) => {
   const { author, comment, date, emotion } = data;
 
   return (
-    `<li class="film-details__comment">
+    `<li class="${isErrorState ? 'shake film-details__comment' :'film-details__comment'}">
       <span class="film-details__comment-emoji">
         <img src="${EmojiMap[emotion]}" width="55" height="55" alt="emoji-smile">
       </span>
@@ -16,7 +16,7 @@ const cretateCommentTemplate = (data) => {
         <p class="film-details__comment-info">
           <span class="film-details__comment-author">${ author }</span>
           <span class="film-details__comment-day">${ formatDuration(date) }</span>
-          <button class="film-details__comment-delete">Delete</button>
+          <button ${isDisabledDeleteButton ? 'disabled' : ''} class="film-details__comment-delete">${isDisabledDeleteButton ? 'Deleting...' : 'Delete'}</button>
         </p>
       </div>
     </li>`
@@ -29,9 +29,41 @@ export default class FilmsDetailsCommentList extends Component {
     super();
 
     this._data = data;
+    this._isDisabledDeleteButton = false;
+    this._isErrorState = false;
 
     this.handleDeleteComment = null;
+
+
     this._handleDeleteComment = this._handleDeleteComment.bind(this);
+  }
+
+  _clearErrorState() {
+    if(this.errorState) {
+      setTimeout(() => this.errorState = false, 1000);
+    }
+  }
+
+  get errorState() {
+    return this._isErrorState;
+  }
+
+  set errorState(newValue) {
+    this._isErrorState = newValue;
+
+    this.updateComponent();
+  }
+
+  get isDisabledDeleteButton() {
+    return this._isDisabledDeleteButton;
+  }
+
+  set isDisabledDeleteButton(newValue) {
+    this._isDisabledDeleteButton = newValue;
+
+    if(this.element) {
+      this.updateComponent();
+    }
   }
 
   _handleDeleteComment() {
@@ -51,6 +83,7 @@ export default class FilmsDetailsCommentList extends Component {
   }
 
   getTemplate() {
-    return cretateCommentTemplate(this._data);
+    this._clearErrorState();
+    return cretateCommentTemplate(this._data, this.isDisabledDeleteButton, this.errorState);
   }
 }

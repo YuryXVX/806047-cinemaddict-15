@@ -11,3 +11,17 @@ export const classListAdd = (element, className) => element.classList.add(classN
 export const classListRemove = (element, className) => element.classList.remove(className);
 
 export const deepClone = (target) => JSON.parse(JSON.stringify(target));
+
+export const getShortDescription = (description) => description.length > 140 ? `${description.slice(0, 139)}...` : description;
+
+export const convertArrayToMap = (array) => (array.reduce((map, film) => {
+  const { id } = film;
+
+  if (!id) {
+    return map;
+  }
+
+  map[film.id] = film;
+
+  return map;
+}, {}));

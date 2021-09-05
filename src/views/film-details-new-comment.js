@@ -1,33 +1,33 @@
 import { KeyCode } from '../const';
 import Component from './component';
 
-const createNewCommentTemplate = (emoji) => (
-  `<div class="film-details__new-comment">
+const createNewCommentTemplate = (emoji, isDisabledForm = false, isErrorState = false) => (
+  `<div class="${isErrorState ? 'shake film-details__new-comment' : 'film-details__new-comment'}">
     <div class="film-details__add-emoji-label">
       ${emoji ? `<img src="images/emoji/${emoji}.png" width="55" height="55" alt="emoji-smile">`: ''}
     </div>
 
     <label class="film-details__comment-label">
-      <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">Great movie!</textarea>
+      <textarea ${isDisabledForm ? 'disabled' : ''} class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">Great movie!</textarea>
     </label>
 
     <div class="film-details__emoji-list">
-      <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-smile" value="smile">
+      <input ${isDisabledForm ? 'disabled' : ''} class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-smile" value="smile">
       <label class="film-details__emoji-label" for="emoji-smile">
         <img src="./images/emoji/smile.png" width="30" height="30" alt="emoji">
       </label>
 
-      <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-sleeping" value="sleeping">
+      <input ${isDisabledForm ? 'disabled' : ''} class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-sleeping" value="sleeping">
       <label class="film-details__emoji-label" for="emoji-sleeping">
         <img src="./images/emoji/sleeping.png" width="30" height="30" alt="emoji">
       </label>
 
-      <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-puke" value="puke">
+      <input ${isDisabledForm ? 'disabled' : ''} class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-puke" value="puke">
       <label class="film-details__emoji-label" for="emoji-puke">
         <img src="./images/emoji/puke.png" width="30" height="30" alt="emoji">
       </label>
 
-      <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-angry" value="angry">
+      <input ${isDisabledForm ? 'disabled' : ''} class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-angry" value="angry">
       <label class="film-details__emoji-label" for="emoji-angry">
         <img src="./images/emoji/angry.png" width="30" height="30" alt="emoji">
       </label>
@@ -38,6 +38,9 @@ const createNewCommentTemplate = (emoji) => (
 export default class FilmDetailsNewCommentView extends Component {
   constructor() {
     super();
+
+    this._isErrorState = false;
+    this._isDisabledForm = false;
 
     this._emoji = null;
     this._text = null;
@@ -53,11 +56,31 @@ export default class FilmDetailsNewCommentView extends Component {
     this._refToInputElement = null;
   }
 
-  get emoji () {
+  get errorState() {
+    return this._isErrorState;
+  }
+
+  set errorState(newValue) {
+    this._isErrorState = newValue;
+
+    this.updateComponent();
+  }
+
+  get disabledForm() {
+    return this._isDisabledForm;
+  }
+
+  set disabledForm(newValue) {
+    this._isDisabledForm = newValue;
+
+    this.updateComponent();
+  }
+
+  get emoji() {
     return this._emoji;
   }
 
-  set emoji (newValue) {
+  set emoji(newValue) {
     this._emoji = newValue;
     this.updateComponent();
   }
@@ -69,8 +92,16 @@ export default class FilmDetailsNewCommentView extends Component {
     };
   }
 
+  _clearErrorState() {
+    if(this.errorState) {
+      setTimeout(() => this.errorState = false, 1000);
+    }
+  }
+
   getTemplate() {
-    return createNewCommentTemplate(this._emoji);
+    this._clearErrorState();
+
+    return createNewCommentTemplate(this._emoji, this.disabledForm, this.errorState);
   }
 
   _setCheckedStateInRadionButton() {

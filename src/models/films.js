@@ -1,53 +1,75 @@
-import { FilterType, SortType } from '../const';
-import { getFilmsByFilter, getUserRaiting } from '../mock';
+import { SortType, FilterForInitialStateApp } from '../const';
+import { getSortFilms, getFilmsByFilter } from '../utils/filters';
+import Model from './model';
 
-const getSortFilms = (films ,sortType = SortType.DEFAULT) => {
-  switch(sortType) {
-    case SortType.RATING: {
-      return films.slice().sort((a, b) => a.info.totalRating > b.info.totalRating ? -1 : 0);
-    }
-
-    case SortType.DATE: {
-      return films.slice().sort((a, b) => new Date(a.filmDetails.watchingDate) - new Date(b.filmDetails.watchingDate));
-    }
-
-    default: {
-      return films.slice();
-    }
-  }
+const INITIAL_STATE = {
+  commentsList:[],
+  films: [],
+  filters: FilterForInitialStateApp,
+  userRating: '',
 };
 
-export default class FilmsStore {
-  constructor(films) {
-    this._state = films;
-
+export default class FilmsModel extends Model {
+  constructor(state = INITIAL_STATE) {
+    super();
+    this._state = state;
     this._activeSortButon = SortType.DEFAULT;
-
     this._acitveFilter = 'ALL';
+  }
 
-    // subscribers sets
-    this._listeners = new Set();
-    this._commentListeners = new Set();
+  setState(films) {
+    this._state.films = films;
   }
 
   get films() {
-    return getSortFilms(
-      getFilmsByFilter(this._state.films.slice(), this._acitveFilter),
-      this._activeSortButon,
-    );
+    return getSortFilms(getFilmsByFilter(this._state.films.slice(), this._acitveFilter), this._activeSortButon);
   }
 
-  set films(value) {
-    this._state = Array.from(value);
+  set films(newFilms) {
+    this._state.films = Array.from(newFilms);
+  }
+
+  get initalFilmsList() {
+    return this._state.films.slice();
   }
 
   get activeSortButton() {
     return this._activeSortButon;
   }
 
-  set activeSortButton(value) {
-    this._activeSortButon = value;
-    this._callListeners(this._listeners);
+  set activeSortButton(activeSortType) {
+    this._activeSortButon = activeSortType;
+    this._notifyFilterObservers();
+  }
+
+  get userRating() { return this._state.userRating; }
+
+  set userRating(newUserRaiting) { this._state.userRating = newUserRaiting; }
+
+  get filters() { return this._state.filters; }
+
+  set filters(filterType) {
+    this._state.filters = filterType;
+    this._notifyFilterObservers();
+  }
+
+  get activeFilter() { return this._acitveFilter; }
+
+  set activeFilter(activeFilter) {
+    this._acitveFilter = activeFilter;
+    this._notifyFilterObservers();
+  }
+
+  get commentsList() { return this._state.commentsList; }
+
+  set commentsList(comments) { this._state.commentsList = comments; }
+
+  _getFilmIndexById(filmId) {
+    return this._state.films.findIndex((film) => film.id === filmId);
+  }
+
+  _updateFilmList(index, newItem) {
+    this._state.films = [].concat(this._state.films.slice(0, index), newItem, this._state.films.slice(index + 1));
   }
 
   updateFilm(oldData, newData) {
@@ -57,93 +79,32 @@ export default class FilmsStore {
       return;
     }
 
-    this._state.films = [].concat(this._state.films.slice(0, index), newData, this._state.films.slice(index + 1));
-
-    return new Promise((resolve) => resolve(newData));
-  }
-
-  get userRating() { return this._state.userRating; }
-
-  updateRating(value) {
-    this._state.userRating = getUserRaiting(getFilmsByFilter(value, FilterType.HISTORY).length);
-  }
-
-  get filters() { return this._state.filters; }
-
-  set filters(value) { this._state.filters = value; }
-
-  get activeFilter() { return this._acitveFilter; }
-
-  set activeFilter(value) {
-    this._acitveFilter = value;
-    this._callListeners(this._listeners);
-  }
-
-  get topRated() { return this._state.topRated; }
-
-  get commentsList() { return this._state.commentsList; }
-
-  get mostCommented() { return this._state.mostCommented; }
-
-  _callListeners(listeners) {
-    listeners.forEach((listner) => listner(this));
-  }
-
-  _getFilmIndexById(filmId) {
-    return this._state.films.findIndex((film) => film.id === filmId);
-  }
-
-  updateFilters() {
-    const filters = Object.keys(FilterType).map((filter) => ({
-      name: FilterType[filter],
-      count: filter === this._acitveFilter
-        ? getFilmsByFilter(this._state.films, this._acitveFilter).length
-        : getFilmsByFilter(this._state.films, filter).length,
-    }));
-
-    return filters;
-  }
-
-  _updateFilmList(index, newItem) {
-    this._state.films = [].concat(this._state.films.slice(0, index), newItem, this._state.films.slice(index + 1));
+    this._updateFilmList(index, newData);
+    this._notifyMoviesObservers();
   }
 
   deleteComment(filmId, commentId) {
+    const { films } = this._state;
     const index = this._getFilmIndexById(filmId);
-    const commentIndex = this._state.films[index].comments.findIndex((id) => id === commentId);
-    this._state.films[index].comments.splice(commentIndex, 1);
 
-    this._updateFilmList(index, this._state.films[index]);
+    films[index].comments = this.films[index].comments.filter((comment) => comment !== commentId);
 
-    this._callListeners(this._commentListeners);
-    this._callListeners(this._listeners);
+    this._updateFilmList(index, films[index]);
+
+    this._notifyCommentObservers();
+    this._notifyMoviesObservers();
   }
 
-  createComment(filmId, comment) {
+  createComment(filmId, comments) {
+    const { films } = this._state;
     const index = this._getFilmIndexById(filmId);
-    this._state.films[index].comments.push(comment.id);
 
-    this._state.commentsList.push(comment);
+    films[index].comments = comments.map((comment) => comment.id);
+    this._state.commentsList = comments;
 
-    this._updateFilmList(index, this._state.films[index]);
+    this._updateFilmList(index, films[index]);
 
-    this._callListeners(this._commentListeners);
-    this._callListeners(this._listeners);
-  }
-
-  addDataChangeListener(listener) {
-    this._listeners.add(listener);
-  }
-
-  removeDataChangeListener(listener) {
-    this._listeners.delete(listener);
-  }
-
-  addCommentsChangeListener(listener) {
-    this._commentListeners.add(listener);
-  }
-
-  removeCommentsChangeListener(listener) {
-    this._commentListeners.delete(listener);
+    this._notifyCommentObservers();
+    this._notifyMoviesObservers();
   }
 }

@@ -1,10 +1,14 @@
+import { filmDurationCovert } from '../utils/date';
 import Component from './component';
 
-const createStatisticTemplate = ({ userRating }) => (`<section class="statistic">
+const createStatisticTemplate = ({ rank, data: {watchedFilmsCount, totalDutation}, topGanre }) => {
+  const {hours, minutes} = filmDurationCovert(totalDutation);
+
+  return (`<section class="statistic">
      <p class="statistic__rank">
       Your rank
       <img class="statistic__img" src="images/bitmap@2x.png" alt="Avatar" width="35" height="35">
-      <span class="statistic__rank-label">${userRating}</span>
+      <span class="statistic__rank-label">${rank}</span>
     </p>
 
     <form action="https://echo.htmlacademy.ru/" method="get" class="statistic__filters">
@@ -29,15 +33,15 @@ const createStatisticTemplate = ({ userRating }) => (`<section class="statistic"
     <ul class="statistic__text-list">
       <li class="statistic__text-item">
         <h4 class="statistic__item-title">You watched</h4>
-        <p class="statistic__item-text">22 <span class="statistic__item-description">movies</span></p>
+        <p class="statistic__item-text">${watchedFilmsCount} <span class="statistic__item-description">movies</span></p>
       </li>
       <li class="statistic__text-item">
         <h4 class="statistic__item-title">Total duration</h4>
-        <p class="statistic__item-text">130 <span class="statistic__item-description">h</span> 22 <span class="statistic__item-description">m</span></p>
+        <p class="statistic__item-text">${hours ? `${hours}<span class="statistic__item-description">h</span>` : ''} ${minutes ? `${minutes} <span class="statistic__item-description">m</span>`: ''}</p>
       </li>
       <li class="statistic__text-item">
         <h4 class="statistic__item-title">Top genre</h4>
-        <p class="statistic__item-text">Sci-Fi</p>
+        <p class="statistic__item-text">${topGanre ? topGanre : ''}</p>
       </li>
     </ul>
 
@@ -46,16 +50,83 @@ const createStatisticTemplate = ({ userRating }) => (`<section class="statistic"
     </div>
 
   </section>
-</main>`
-);
+</main>`);
+};
 
 export default class StatisticView extends Component {
   constructor(data) {
     super();
     this._data = data;
+    this._rank = null;
+
+    this._refToFormElements = null;
+
+    this.handleChangeStatisctic = null;
+
+    this._handleChangePeriodStatics = this._handleChangePeriodStatics.bind(this);
+  }
+
+  get data() {
+    return this._data;
+  }
+
+  get rank() {
+    return this._rank;
+  }
+
+  set rank(newData) {
+    this._rank = newData;
+  }
+
+  set data(newData) {
+    this._data = newData;
+
+    this.updateComponent();
+  }
+
+
+  _setCheckedStateFormInElement() {
+    const findedRadioElement = [...this._refToFormElements].find((el) => el.id === this._formElement.id);
+    findedRadioElement.checked = true;
+  }
+
+  updateComponent() {
+    super.updateComponent();
+
+    this._setCheckedStateFormInElement();
+  }
+
+  _selectedElements() {
+    this._refToFormElements = this.element.querySelectorAll('.statistic__filters-input');
+    return { inputs: this._refToFormElements };
+  }
+
+  _handleChangePeriodStatics(evt) {
+    this._formElement = evt.target;
+    this.handleChangeStatisctic(evt.target.value);
+  }
+
+  _addEventListeners() {
+    const { inputs } = this._selectedElements();
+
+    inputs.forEach((element) => {
+      element.addEventListener('change', this._handleChangePeriodStatics);
+    });
+  }
+
+  _removeEventListeners() {
+    const { inputs } = this._selectedElements();
+
+    inputs.forEach((element) => {
+      element.removeEventListener('change', this._handleChangePeriodStatics);
+    });
+  }
+
+  get canvasContext() {
+    return this.element.querySelector('.statistic__chart');
   }
 
   getTemplate() {
-    return createStatisticTemplate(this._data);
+    return createStatisticTemplate({data: this.data, rank: this._rank, topGanre: this.data.getTopGanre });
   }
 }

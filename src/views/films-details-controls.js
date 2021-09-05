@@ -26,6 +26,22 @@ export default class FilmDetailsControlsView extends Component {
     this.handleWatchListButton = null;
     this.handleHistoryListButton = null;
     this.handleFavoriteListButton = null;
+
+    this._handleFavoriteListButton = this._handleFavoriteListButton.bind(this);
+    this._handleWatchListButton = this._handleWatchListButton.bind(this);
+    this._handleHistoryListButton = this._handleHistoryListButton.bind(this);
+  }
+
+  _handleWatchListButton() {
+    this.handleWatchListButton(this._data);
+  }
+
+  _handleHistoryListButton() {
+    this.handleHistoryListButton(this._data);
+  }
+
+  _handleFavoriteListButton() {
+    this.handleFavoriteListButton(this._data);
   }
 
   get data() {
@@ -38,15 +54,15 @@ export default class FilmDetailsControlsView extends Component {
   }
 
   _addEventListeners() {
-    this.element.querySelector(`${PREFIX_CLASS_BUTTON}--add-to-watchlist`).addEventListener('click', () => this.handleWatchListButton(this._data));
-    this.element.querySelector(`${PREFIX_CLASS_BUTTON}--mark-as-watched`).addEventListener('click', () => this.handleHistoryListButton(this._data));
-    this.element.querySelector(`${PREFIX_CLASS_BUTTON}--favorite`).addEventListener('click', () => this.handleFavoriteListButton(this._data));
+    this.element.querySelector(`${PREFIX_CLASS_BUTTON}--add-to-watchlist`).addEventListener('click', this._handleWatchListButton);
+    this.element.querySelector(`${PREFIX_CLASS_BUTTON}--mark-as-watched`).addEventListener('click', this._handleHistoryListButton);
+    this.element.querySelector(`${PREFIX_CLASS_BUTTON}--favorite`).addEventListener('click', this._handleFavoriteListButton);
   }
 
   _removeEventListeners() {
-    this.element.querySelector(`${PREFIX_CLASS_BUTTON}--add-to-watchlist`).removeEventListener('click', () => this.handleWatchListButton(this._data));
-    this.element.querySelector(`${PREFIX_CLASS_BUTTON}--mark-as-watched`).addEventListener('click', () => this.handleHistoryListButton(this._data));
-    this.element.querySelector(`${PREFIX_CLASS_BUTTON}--favorite`).addEventListener('clicl', () => this.handleFavoriteListButton(this._data));
+    this.element.querySelector(`${PREFIX_CLASS_BUTTON}--add-to-watchlist`).removeEventListener('click', this._handleWatchListButton);
+    this.element.querySelector(`${PREFIX_CLASS_BUTTON}--mark-as-watched`).addEventListener('click', this._handleHistoryListButton);
+    this.element.querySelector(`${PREFIX_CLASS_BUTTON}--favorite`).addEventListener('clicl', this._handleFavoriteListButton);
   }
 
   getTemplate() {

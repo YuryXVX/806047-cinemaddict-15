@@ -12,6 +12,11 @@ export default class FilmPresenter {
     this._handleDataChange = handleDataChange;
     this._handlePopupRender = handlePopupRender;
 
+    this._handleOpenDetailsPopup = this._handleOpenDetailsPopup.bind(this);
+    this._handleSetWatchFilms = this._handleSetWatchFilms.bind(this);
+    this._handleSetHistoryFilms = this._handleSetHistoryFilms.bind(this);
+    this._handleSetFavoriteFilms = this._handleSetFavoriteFilms.bind(this);
+
     this._filmCardView = null;
   }
 
@@ -39,31 +44,36 @@ export default class FilmPresenter {
     removeElement(oldFilmComponent);
   }
 
+  shake() {
+    this._filmCardView.errorState = true;
+  }
+
+  _handleSetWatchFilms() {
+    const newData = deepClone(this._data);
+    newData.filmDetails.watchlist = !newData.filmDetails.watchlist;
+
+    this._handleDataChange(this, this._data, newData);
+  }
+
+  _handleSetHistoryFilms() {
+    const newData = deepClone(this._data);
+    newData.filmDetails.history = !newData.filmDetails.history;
+
+    this._handleDataChange(this, this._data, newData);
+  }
+
+  _handleSetFavoriteFilms() {
+    const newData = deepClone(this._data);
+    newData.filmDetails.favorite = !newData.filmDetails.favorite;
+
+    this._handleDataChange(this, this._data, newData);
+  }
+
   _initListeners() {
-    this._filmCardView.setPosterClickHandler(() => this._handleOpenDetailsPopup(this._data));
-    this._filmCardView.setTitleClickHandler(() => this._handleOpenDetailsPopup(this._data));
-    this._filmCardView.setCommentsLinkClickHandler(() => this._handleOpenDetailsPopup(this._data));
-
-    this._filmCardView.setWatchButtonClickHandler(() => {
-      const newData = deepClone(this._data);
-      newData.filmDetails.watchlist = !newData.filmDetails.watchlist;
-
-      this._handleDataChange(this, this._data, newData);
-    });
-
-    this._filmCardView.setAlreadyWatchedButtonClickHandler(() => {
-      const newData = deepClone(this._data);
-      newData.filmDetails.history = !newData.filmDetails.history;
-
-      this._handleDataChange(this, this._data, newData);
-    });
-
-    this._filmCardView.setFavoriteButtonClickHandler(() => {
-      const newData = deepClone(this._data);
-      newData.filmDetails.favorite = !newData.filmDetails.favorite;
-
-      this._handleDataChange(this, this._data, newData);
-    });
+    this._filmCardView.handleSetWatchFilms = this._handleSetWatchFilms;
+    this._filmCardView.handleSetHistoryFilms = this._handleSetHistoryFilms;
+    this._filmCardView.handleSetFavoriteFilms = this._handleSetFavoriteFilms;
+    this._filmCardView.handleOpenPopup = this._handleOpenDetailsPopup;
   }
 
   destroy() {

@@ -3,9 +3,11 @@ import { freeze } from './utils/helpers';
 export const FilterType = freeze({
   ALL: 'All Films',
   WATCHLIST: 'Watchlist',
-  FAVORITE: 'Favorites',
   HISTORY: 'History',
+  FAVORITE: 'Favorites',
 });
+
+export const FilterForInitialStateApp = Object.values(FilterType).map((name) => ({ name, count: 0}));
 
 export const ProfileRaiting = freeze({
   NOVICE: 'novice',
@@ -37,9 +39,40 @@ export const ModeView = freeze({
   DEFAULT: 'default',
 });
 
+export const EmptyListMessages = {
+  ALL: 'There are no movies in our database',
+  WATCHLIST: 'There are no movies in watchlist database',
+  HISTORY: 'There are no movies in history database',
+  FAVORITE: 'There are no movies in favorite database',
+};
+
+export const TimePeriod = freeze({
+  TODAY: 'today',
+  WEEK: 'week',
+  MONTH: 'month',
+  YEAR: 'year',
+});
+
+export const SuccessHTTPStatusRange = {
+  MIN: 200,
+  MAX: 299,
+};
+
+export const HTTPMethod = {
+  GET: 'GET',
+  POST: 'POST',
+  PUT: 'PUT',
+  DELETE: 'DELETE',
+};
+
+export const ApiConfig = {
+  TOKEN: 'Basic ddsadasewqe1013',
+  END_POINT: 'https://15.ecmascript.pages.academy/cinemaddict/',
+};
+
 export const FILMS_COUNT_PER_STEP = 5;
 
-export const FILMS_COUNT = 15;
+export const FILMS_COUNT = 35;
 
 export const PREFIX_CLASS_BUTTON = '.film-card__controls-item';
 

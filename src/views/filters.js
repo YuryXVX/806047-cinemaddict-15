@@ -27,7 +27,7 @@ const createFilterButtonListTemplate = (active, filters) => (
 );
 
 export default class FiltersView extends Component {
-  constructor(active, filters) {
+  constructor(active = FilterType.ALL, filters = []) {
     super();
 
     this._active = active;
@@ -46,13 +46,11 @@ export default class FiltersView extends Component {
 
   set filters(newValue) {
     this._filters = newValue;
-
     this.updateComponent();
   }
 
   set activeFilter(newValue) {
     this._active = newValue;
-
     this.updateComponent();
   }
 
@@ -70,7 +68,8 @@ export default class FiltersView extends Component {
     }
   }
 
-  _handleChangeView() {
+  _handleChangeView(evt) {
+    evt.preventDefault();
     this.handleChangeView();
   }
 

@@ -3,15 +3,27 @@ import Component from './component';
 const showMoreButtonTemplate = '<button class="films-list__show-more">Show more</button>';
 
 export default class ShowMoreButtonView extends Component {
-  getTemplate() {
-    return showMoreButtonTemplate;
+  constructor() {
+    super();
+
+    this.handleShowMore = null;
+    this._handleShowMore = this._handleShowMore.bind(this);
   }
 
-  setShowMoreButtonClickHandler(handler) {
-    this.getElement().addEventListener('click', (evt) => {
-      evt.preventDefault();
-      handler();
-    });
+  _handleShowMore() {
+    this.handleShowMore();
+  }
+
+  _addEventListeners() {
+    this.element.addEventListener('click', this._handleShowMore);
+  }
+
+  _removeEventListeners() {
+    this.element.removeEventListener('click', this._handleShowMore);
+  }
+
+  getTemplate() {
+    return showMoreButtonTemplate;
   }
 }
 
