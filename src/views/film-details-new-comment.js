@@ -1,4 +1,5 @@
 import { KeyCode } from '../const';
+import { isMac } from '../utils/helpers';
 import Component from './component';
 
 const createNewCommentTemplate = (emoji, isDisabledForm = false, isErrorState = false) => (
@@ -101,12 +102,12 @@ export default class FilmDetailsNewCommentView extends Component {
   getTemplate() {
     this._clearErrorState();
 
-    return createNewCommentTemplate(this._emoji, this.disabledForm, this.errorState);
+    return createNewCommentTemplate(this._emoji, this._isDisabledForm, this._isErrorState);
   }
 
   _setCheckedStateInRadionButton() {
-    const findedRadioElement = [...this._refToEmojiListElement].find((el) => el.id === this._radioElement.id);
-    findedRadioElement.checked = true;
+    const foundRadioElement = [...this._refToEmojiListElement].find((el) => el.id === this._radioElement.id);
+    foundRadioElement.checked = true;
   }
 
   _saveDataWhenUpdatingComponent() {
@@ -126,11 +127,21 @@ export default class FilmDetailsNewCommentView extends Component {
     this.emoji = this._radioElement.value;
   }
 
-  _handleWindowKeyDown(evt) {
-    const {code, ctrlKey} = evt;
+  _dispathCreateCommentEvent() {
+    this.element.dispatchEvent(new Event('submit-comment'));
+  }
 
-    if (code === KeyCode.ENTER && ctrlKey) {
-      this.element.dispatchEvent(new Event('submit-comment'));
+  _handleWindowKeyDown(evt) {
+    const {code, ctrlKey, metaKey} = evt;
+
+    if(isMac()) {
+      if(code === KeyCode.ENTER && metaKey) {
+        return this._dispathCreateCommentEvent();
+      }
+    } else {
+      if (code === KeyCode.ENTER && ctrlKey) {
+        return this._dispathCreateCommentEvent();
+      }
     }
   }
 

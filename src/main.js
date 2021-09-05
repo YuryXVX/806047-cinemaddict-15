@@ -1,16 +1,21 @@
+// presenter
 import AppPresenter from './presenters/app';
+
+// model
 import FilmsModel from './models/films';
 
+// api
+import Api from './api/api';
+import { ApiConfig } from './const';
+import Provider from './provider/provider';
+import Store from './store/store';
+
+// containers
 const header = document.querySelector('.header');
 const footer = document.querySelector('.footer__statistics');
 const main = document.querySelector('.main');
 
 const containers = { header, footer, main };
-
-import Api from './api/api';
-import { ApiConfig } from './const';
-import Provider from './provider/provider';
-import Store from './store/store';
 
 const STORE_PREFIX = 'cinemadisc-localstorage';
 const STORE_VER = 'v1';

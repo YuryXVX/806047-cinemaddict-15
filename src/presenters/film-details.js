@@ -25,9 +25,7 @@ export default class FilmDetailsPresenter extends RootPresenter {
     this._detailsCommnentContainerView = new FilmDetailsCommentList();
 
     this._id = null;
-
     this._data = null;
-    this._newData = null;
 
     this._handleClosePopupKeyDown = this._handleClosePopupKeyDown.bind(this);
     this._handleClosePopup = this._handleClosePopup.bind(this);
@@ -43,6 +41,10 @@ export default class FilmDetailsPresenter extends RootPresenter {
     this._model.addCommentsChangeListener(this._handleModalChangeData);
   }
 
+  get modalId () {
+    return this._id;
+  }
+
   _handleModalChangeData(data) {
     const newData = data.films.find((it) => it.id === this.modalId);
 
@@ -54,11 +56,6 @@ export default class FilmDetailsPresenter extends RootPresenter {
 
     this._updateComments(this._data.comments);
     this._detailsView.updateCommentCountElement(this._data.comments.length);
-  }
-
-
-  get modalId () {
-    return this._id;
   }
 
   _handleClosePopup() {
@@ -117,37 +114,30 @@ export default class FilmDetailsPresenter extends RootPresenter {
     this._detailsControls.data = newData;
   }
 
-  _handleWatchListButton() {
-    const newData = deepClone(this._data);
-    newData.filmDetails.watchlist = !newData.filmDetails.watchlist;
-
-    this._api.updateFilm(this._data.id, new Film(toRawFilmModel(newData)))
+  _updateFilm(film) {
+    this._api.updateFilm(this._data.id, new Film(toRawFilmModel(film)))
       .then((films) => {
         this._model.updateFilm(this._data, films);
         this._updateFilmsDetailsData(films);
       });
+  }
+
+  _handleWatchListButton() {
+    const newData = deepClone(this._data);
+    newData.filmDetails.watchlist = !newData.filmDetails.watchlist;
+    this._updateFilm(newData);
   }
 
   _handleFavoriteListButton() {
     const newData = deepClone(this._data);
     newData.filmDetails.favorite = !newData.filmDetails.favorite;
-
-    this._api.updateFilm(this._data.id, new Film(toRawFilmModel(newData)))
-      .then((films) => {
-        this._model.updateFilm(this._data, films);
-        this._updateFilmsDetailsData(films);
-      });
+    this._updateFilm(newData);
   }
 
   _handleHistoryListButton() {
     const newData = deepClone(this._data);
     newData.filmDetails.history = !newData.filmDetails.history;
-
-    this._api.updateFilm(this._data.id, new Film(toRawFilmModel(newData)))
-      .then((films) => {
-        this._model.updateFilm(this._data, films);
-        this._updateFilmsDetailsData(films);
-      });
+    this._updateFilm(newData);
   }
 
   _handleDeleteComment(data) {
@@ -174,10 +164,10 @@ export default class FilmDetailsPresenter extends RootPresenter {
 
   _updateComments(comments) {
     this._removeCommentList();
-    this._renderCommnents(comments);
+    this._renderComments(comments);
   }
 
-  _renderCommnents(comments) {
+  _renderComments(comments) {
     this._detailsCommnentViews = comments.map((comment) => {
       const commentView = new FilmsDetailsComment(comment, this._handleDeleteComment);
       commentView.handleDeleteComment = this._handleDeleteComment;
@@ -205,7 +195,7 @@ export default class FilmDetailsPresenter extends RootPresenter {
     this._detailsControls.handleFavoriteListButton = this._handleFavoriteListButton;
     this._detailsNewCommentView.handleCreateComment = this._handleCreateComment;
 
-    this._renderCommnents(data.comments);
+    this._renderComments(data.comments);
 
     render(document.body, this._detailsView.getElement(), RenderPosition.BEFOREEND);
   }

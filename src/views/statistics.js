@@ -1,8 +1,8 @@
 import { filmDurationCovert } from '../utils/date';
 import Component from './component';
 
-const createStatisticTemplate = ({ rank, data: {watchedFilmsCount, totalDutation}, topGanre }) => {
-  const {hours, minutes} = filmDurationCovert(totalDutation);
+const createStatisticTemplate = ({ rank, data: {watchedFilmsCount, totalDuration}, topGenre }) => {
+  const {hours, minutes} = filmDurationCovert(totalDuration);
 
   return (`<section class="statistic">
      <p class="statistic__rank">
@@ -41,7 +41,7 @@ const createStatisticTemplate = ({ rank, data: {watchedFilmsCount, totalDutation
       </li>
       <li class="statistic__text-item">
         <h4 class="statistic__item-title">Top genre</h4>
-        <p class="statistic__item-text">${topGanre ? topGanre : ''}</p>
+        <p class="statistic__item-text">${topGenre ? topGenre : ''}</p>
       </li>
     </ul>
 
@@ -86,8 +86,8 @@ export default class StatisticView extends Component {
 
 
   _setCheckedStateFormInElement() {
-    const findedRadioElement = [...this._refToFormElements].find((el) => el.id === this._formElement.id);
-    findedRadioElement.checked = true;
+    const foundRadioElement = [...this._refToFormElements].find((el) => el.id === this._formElement.id);
+    foundRadioElement.checked = true;
   }
 
   updateComponent() {
@@ -127,6 +127,6 @@ export default class StatisticView extends Component {
   }
 
   getTemplate() {
-    return createStatisticTemplate({data: this.data, rank: this._rank, topGanre: this.data.getTopGanre });
+    return createStatisticTemplate({data: this.data, rank: this._rank, topGenre: this.data.getTopGenre });
   }
 }

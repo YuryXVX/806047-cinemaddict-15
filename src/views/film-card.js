@@ -16,7 +16,6 @@ const createFilmCardTemplate = ({ comments, filmDetails, info }, errorState) => 
 
   const [,,year] = formatReleaseDate(date).split(' ');
 
-
   return (
     `<article class="${errorState ? 'shake film-card' : 'film-card'}">
       <h3 class="film-card__title">${title}</h3>
@@ -55,6 +54,14 @@ export default class FilmCardView extends Component {
     return this._errorState;
   }
 
+  set errorState(newValue) {
+    this._errorState = newValue;
+
+    if(this.element) {
+      this.updateComponent();
+    }
+  }
+
   _addEventListeners() {
     this.element.querySelector(`${PREFIX_CLASS_BUTTON}--add-to-watchlist`).addEventListener('click', this.handleSetWatchFilms);
     this.element.querySelector(`${PREFIX_CLASS_BUTTON}--mark-as-watched`).addEventListener('click', this.handleSetHistoryFilms);
@@ -71,14 +78,6 @@ export default class FilmCardView extends Component {
     this.element.querySelector('.film-card__comments').removeEventListener('click', this.handleOpenPopup);
     this.element.querySelector('.film-card__title').removeEventListener('click', this.handleOpenPopup);
     this.element.querySelector('.film-card__poster').removeEventListener('click', this.handleOpenPopup);
-  }
-
-  set errorState(newValue) {
-    this._errorState = newValue;
-
-    if(this.element) {
-      this.updateComponent();
-    }
   }
 
   _clearErrorState() {

@@ -1,29 +1,29 @@
 import Component from './component';
 
-const createProfileTemplate = (raiting) => (
+const createProfileTemplate = (rating) => (
   `<section class="header__profile profile">
-    <p class="profile__rating">${raiting}</p>
+    <p class="profile__rating">${rating}</p>
     <img class="profile__avatar" src="images/bitmap@2x.png" alt="Avatar" width="35" height="35">
   </section>`
 );
 
 export default class ProfileView extends Component {
-  constructor(raiting) {
+  constructor(rating) {
     super();
-    this._raiting = raiting;
+    this._rating = rating;
   }
 
-  get raiting() {
-    return this._raiting;
+  get rating() {
+    return this._rating;
   }
 
-  set raiting(newValue) {
-    this._raiting = newValue;
+  set rating(newValue) {
+    this._rating = newValue;
 
     this.updateComponent();
   }
 
   getTemplate() {
-    return createProfileTemplate(this._raiting);
+    return createProfileTemplate(this._rating);
   }
 }

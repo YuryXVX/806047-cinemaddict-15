@@ -11,7 +11,7 @@ import LoadingView  from '../views/loading';
 import FilmList from './film-list';
 import Statistic from './statistics';
 import RootPresenter from './root-presenter';
-import { getFilmsByFilter, getUserRaiting, updateFilters } from '../utils/filters';
+import { getFilmsByFilter, getUserRating, updateFilters } from '../utils/filters';
 
 export default class App extends RootPresenter {
   constructor({ header, main, footer }, model, api) {
@@ -27,12 +27,12 @@ export default class App extends RootPresenter {
     this._loadingView = null;
     this._footerView = null;
 
-    this._handleRaitingChange = this._handleRaitingChange.bind(this);
+    this._handleRatingChange = this._handleRatingChange.bind(this);
     this._handleChangeFilter = this._handleChangeFilter.bind(this);
     this._handleFiltersCountChange = this._handleFiltersCountChange.bind(this);
-    this._handleDestroyFilmListPresentor = this._handleDestroyFilmListPresentor.bind(this);
+    this._handleDestroyFilmListPresenter = this._handleDestroyFilmListPresenter.bind(this);
 
-    this._filmListPresenter = new FilmList(this._model, this._handleRaitingChange, this._handleFiltersCountChange, api);
+    this._filmListPresenter = new FilmList(this._model, this._handleRatingChange, this._handleFiltersCountChange, api);
     this._statisticsPresenter = new Statistic();
 
     this._renderDefaultLayout();
@@ -55,13 +55,12 @@ export default class App extends RootPresenter {
   }
 
   _handleFiltersCountChange() {
-    const updatedFilters = updateFilters(this._model.initalFilmsList);
-    this._filterView.filters = updatedFilters;
+    this._filterView.filters = updateFilters(this._model.initalFilmsList);
   }
 
-  _handleRaitingChange() {
-    this._model.userRating = getUserRaiting(getFilmsByFilter(this._model.initalFilmsList, FilterType.HISTORY).length);
-    this._profileView.raiting = this._model.userRating;
+  _handleRatingChange() {
+    this._model.userRating = getUserRating(getFilmsByFilter(this._model.initalFilmsList, FilterType.HISTORY).length);
+    this._profileView.rating = this._model.userRating;
   }
 
   _handleChangeFilter(filter) {
@@ -75,7 +74,7 @@ export default class App extends RootPresenter {
     this._model.activeSortButton = SortType.DEFAULT;
   }
 
-  _handleDestroyFilmListPresentor() {
+  _handleDestroyFilmListPresenter() {
     this._isStaticsitcsViewRendered = true;
     this._filterView.activeFilter = 'STATISTIC';
 
@@ -90,7 +89,7 @@ export default class App extends RootPresenter {
   }
 
   _updateDefaultLayout() {
-    this._handleRaitingChange(this._model.films);
+    this._handleRatingChange(this._model.films);
     this._footerView.filmsCount = this._model.films.length || 0;
     this._handleFiltersCountChange();
   }
@@ -118,7 +117,7 @@ export default class App extends RootPresenter {
   _renderFilterComponent(activeFilter, filters) {
     this._filterView = new Filters(activeFilter, filters);
     this._filterView.handleChangeFilter = this._handleChangeFilter;
-    this._filterView.handleChangeView = this._handleDestroyFilmListPresentor;
+    this._filterView.handleChangeView = this._handleDestroyFilmListPresenter;
 
     render(this._mainContainer, this._filterView.getElement(), RenderPosition.AFTERBEGIN);
   }
