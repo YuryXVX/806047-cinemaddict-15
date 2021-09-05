@@ -29,13 +29,13 @@ export default class FilmListPresenter extends RootPresenter {
 
     this._containerView = new Container({classList: ['films']});
 
-    this._filmListView = new Container({ title: 'All movies. Upcoming', classList: ['films-list'] });
-    this._filmListMostCommentedView = new Container({ title: 'Most commented', classList: ['films-list films-list--extra'], isExtra: true, noHiddenTitle: true });
-    this._filmListTopRatedView = new Container({ title: 'Top rated', classList: ['films-list films-list--extra'], isExtra: true, noHiddenTitle: true });
+    this._filmsSectionView = new Container({ title: 'All movies. Upcoming', classList: ['films-list'] });
+    this._filmsMostCommentedSectionView = new Container({ title: 'Most commented', classList: ['films-list films-list--extra'], isExtra: true, noHiddenTitle: true });
+    this._filmsTopRatedSectionView = new Container({ title: 'Top rated', classList: ['films-list films-list--extra'], isExtra: true, noHiddenTitle: true });
 
-    this._filmListContainerView = new Container({ tag: 'div', classList: ['films-list__container'] });
-    this._filmListContainerMostCommentedView = new Container({ tag: 'div', classList: ['films-list__container'] });
-    this._filmListContainerTopRatedView = new Container({ tag: 'div', classList: ['films-list__container'] });
+    this._filmsContainerView = new Container({ tag: 'div', classList: ['films-list__container'] });
+    this._filmsContainerMostCommentedView = new Container({ tag: 'div', classList: ['films-list__container'] });
+    this._filmsContainerTopRatedView = new Container({ tag: 'div', classList: ['films-list__container'] });
 
 
     this._filmsPresenters = [];
@@ -123,8 +123,8 @@ export default class FilmListPresenter extends RootPresenter {
 
   _renderAllFilms() {
     render(this._container, this._containerView.getElement(), RenderPosition.BEFOREEND);
-    render(this._containerView.getElement(), this._filmListView.getElement(), RenderPosition.BEFOREEND);
-    render(this._filmListView.getElement(), this._filmListContainerView.getElement(), RenderPosition.BEFOREEND);
+    render(this._containerView.getElement(), this._filmsSectionView.getElement(), RenderPosition.BEFOREEND);
+    render(this._filmsSectionView.getElement(), this._filmsContainerView.getElement(), RenderPosition.BEFOREEND);
 
     if(!this._model.films.length) {
       removeElement(this._sortView);
@@ -163,14 +163,14 @@ export default class FilmListPresenter extends RootPresenter {
       return;
     }
 
-    render(this._containerView.getElement(), this._filmListMostCommentedView.getElement(), RenderPosition.BEFOREEND);
-    render(this._filmListMostCommentedView.getElement(), this._filmListContainerMostCommentedView.getElement(), RenderPosition.BEFOREEND);
+    render(this._containerView.getElement(), this._filmsMostCommentedSectionView.getElement(), RenderPosition.BEFOREEND);
+    render(this._filmsMostCommentedSectionView.getElement(), this._filmsContainerMostCommentedView.getElement(), RenderPosition.BEFOREEND);
 
     this._renderCommentedFilms(mostCommentFilms);
   }
 
   _renderTopFilms(films) {
-    const container = this._filmListContainerTopRatedView.getElement();
+    const container = this._filmsContainerTopRatedView.getElement();
     const topRatedFilms = getFilmPresenters(container, films, this._handleDataChange, this._handleRenderFilmDetailsPopup);
 
     this._filmsTopRatedPresenters = topRatedFilms;
@@ -183,8 +183,8 @@ export default class FilmListPresenter extends RootPresenter {
       return;
     }
 
-    render(this._containerView.getElement(), this._filmListTopRatedView.getElement(), RenderPosition.BEFOREEND);
-    render(this._filmListTopRatedView.getElement(), this._filmListContainerTopRatedView.getElement(), RenderPosition.BEFOREEND);
+    render(this._containerView.getElement(), this._filmsTopRatedSectionView.getElement(), RenderPosition.BEFOREEND);
+    render(this._filmsTopRatedSectionView.getElement(), this._filmsContainerTopRatedView.getElement(), RenderPosition.BEFOREEND);
 
 
     this._renderTopFilms(topRatedFilms);
@@ -194,9 +194,12 @@ export default class FilmListPresenter extends RootPresenter {
     const mostCommentedFilms = getMostCommentedFilms(this._model.initalFilmsList).slice(0, 2);
 
     if(!mostCommentedFilms.length) {
-      removeElement(this._filmListMostCommentedView);
-      removeElement(this._filmListContainerMostCommentedView);
+      removeElement(this._filmsMostCommentedSectionView);
+      removeElement(this._filmsContainerMostCommentedView);
       return;
+    } else {
+      render(this._containerView.getElement(), this._filmsMostCommentedSectionView.getElement(), RenderPosition.BEFOREEND);
+      render(this._filmsMostCommentedSectionView.getElement(), this._filmsContainerMostCommentedView.getElement(), RenderPosition.BEFOREEND);
     }
 
     this._removeMostCommentedFilms();
@@ -215,14 +218,14 @@ export default class FilmListPresenter extends RootPresenter {
   }
 
   _renderCommentedFilms(films) {
-    const container = this._filmListContainerMostCommentedView.getElement();
+    const container = this._filmsContainerMostCommentedView.getElement();
     const filmPresenters = getFilmPresenters(container, films, this._handleDataChange, this._handleRenderFilmDetailsPopup);
 
     this._filmsMostCommentedPresenters = filmPresenters;
   }
 
   _renderFilms(films) {
-    const container = this._filmListContainerView.getElement();
+    const container = this._filmsContainerView.getElement();
 
     const filmsPresenters = getFilmPresenters(container, films, this._handleDataChange, this._handleRenderFilmDetailsPopup);
 
@@ -252,7 +255,7 @@ export default class FilmListPresenter extends RootPresenter {
 
     removeElement(this._sortView);
 
-    const container = this._filmListView.getElement();
+    const container = this._filmsSectionView.getElement();
 
     this._noFilmsMessageView = new NoFilmsMessage(EmptyListMessages[this._model.activeFilter]);
 
@@ -270,7 +273,7 @@ export default class FilmListPresenter extends RootPresenter {
 
     this._showMoreButton = new ShowMoreButton();
 
-    render(this._filmListView.getElement(), this._showMoreButton.getElement(), RenderPosition.BEFOREEND);
+    render(this._filmsSectionView.getElement(), this._showMoreButton.getElement(), RenderPosition.BEFOREEND);
 
     this._showMoreButton.handleShowMore = this._handleLoadMoreFilms;
   }

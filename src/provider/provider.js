@@ -45,34 +45,38 @@ export default class Provider {
 
   getComments(filmID) {
     if (this.isOnline) {
-      return this._api.getComments(filmID)
-        .then((comment) => {
-          this._store.setItem(filmID, comment);
-          return comment;
-        });
-    }
-
-    const comments = this._store.getItem(filmID).comments;
-    const areCommentsLoaded = !Array.isArray(comments);
-
-    if (!areCommentsLoaded) {
-      return Promise.reject();
-    }
-
-    return Promise.resolve(Object.values(comments));
-  }
-
-  deleteComment(commentID) {
-    if (this.isOnline) {
-      return this._api.deleteComment(commentID);
+      return this._api.getComments(filmID);
     }
 
     return Promise.reject();
   }
 
-  createComment(comment) {
+  deleteComment(filmId, commentID) {
+    if (this.isOnline) {
+      return this._api.deleteComment(commentID)
+        .then(() => {
+          const oldFilm = this._store.getItem(filmId);
+          const comments = oldFilm.comments.filter((comment) => comment !== commentID);
+          const newFilm = {...oldFilm, comments };
+          this._store.setItem(filmId, newFilm);
+        });
+    }
+
+    return Promise.reject();
+  }
+
+  createComment(filmId, comment) {
     if(this.isOnline) {
-      return this._api.createComment(comment);
+      return this._api.createComment(filmId, comment)
+        .then((newComment) => {
+          const oldFilm = this._store.getItem(filmId);
+          const comments = [...newComment.map((it) => it.id)];
+          const newFilm = {...oldFilm, comments };
+
+          this._store.setItem(filmId, newFilm);
+
+          return newComment;
+        });
     }
 
     return Promise.reject();

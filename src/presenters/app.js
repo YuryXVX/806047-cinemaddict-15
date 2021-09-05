@@ -39,6 +39,7 @@ export default class App extends RootPresenter {
   }
 
   _renderDefaultLayout() {
+    this._renderLoader();
     this._renderHeaderComponent();
     this._renderFilterComponent(this._model.activeFilter, this._model.filters);
     this._renderFooterComponent();
@@ -84,10 +85,6 @@ export default class App extends RootPresenter {
   }
 
   _renderFilmListPresenter() {
-    if(this._loadingView) {
-      this._removeLoader();
-    }
-
     this._isStaticsitcsViewRendered = false;
     this._filmListPresenter.render({ container: this._mainContainer, filters: this._filterView });
   }
@@ -99,7 +96,10 @@ export default class App extends RootPresenter {
   }
 
   render() {
-    this._renderLoader();
+    if(this._loadingView) {
+      removeElement(this._loadingView);
+    }
+
     this._updateDefaultLayout();
     this._renderFilmListPresenter();
   }

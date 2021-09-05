@@ -23,15 +23,15 @@ const provider = new Provider(api, store);
 const app = new AppPresenter(containers, model, provider);
 
 
-window.addEventListener('load', () => {
-  navigator.serviceWorker.register('/sw.js');
-});
-
 provider.getAllFilms()
   .then((movies) => {
     model.setState(movies);
     app.render();
   });
+
+window.addEventListener('load', () => {
+  navigator.serviceWorker.register('/sw.js');
+});
 
 window.addEventListener('online', () => {
   document.title = document.title.replace('[offline]', '');

@@ -157,4 +157,6 @@ export const updateFilters = (films, activeFilter) => Object.keys(FilterType)
 
 export const getTopRatedFilms = (films) => films.slice().sort((a, b) => a.info.totalRating < b.info.totalRating ? 0 : -1);
 
-export const getMostCommentedFilms = (films) => films.slice().sort((a, b) => a.comments.length < b.comments.length ? 0 : -1);
+export const getMostCommentedFilms = (films) => films.slice().sort((a, b) => a.comments.length < b.comments.length ? 0 : -1).filter((it) => it.comments.length);
+
+
