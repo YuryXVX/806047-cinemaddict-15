@@ -34,11 +34,6 @@ export const SortType = freeze({
   RATING: 'rating',
 });
 
-export const ModeView = freeze({
-  MODAL: 'modal',
-  DEFAULT: 'default',
-});
-
 export const EmptyListMessages = {
   ALL: 'There are no movies in our database',
   WATCHLIST: 'There are no movies in watchlist database',
@@ -71,8 +66,5 @@ export const ApiConfig = {
 };
 
 export const FILMS_COUNT_PER_STEP = 5;
-
-export const FILMS_COUNT = 35;
-
 export const PREFIX_CLASS_BUTTON = '.film-card__controls-item';
 

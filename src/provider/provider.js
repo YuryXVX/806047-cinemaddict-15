@@ -1,5 +1,5 @@
 import Film, { toRawFilmModel } from '../adapters/film';
-import { convertArrayToMap } from '../utils/helpers';
+import { convertArrayToMap } from '../utils/filters';
 
 export default class Provider {
   constructor(api, store) {

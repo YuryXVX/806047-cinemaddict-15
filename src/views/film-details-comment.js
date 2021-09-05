@@ -3,7 +3,7 @@ import { formatDuration } from '../utils/date';
 import Component from './component';
 import he from 'he';
 
-const cretateCommentTemplate = (data, isDisabledDeleteButton = false, isErrorState = false) => {
+const createCommentTemplate = (data, isDisabledDeleteButton = false, isErrorState = false) => {
   const { author, comment, date, emotion } = data;
 
   return (
@@ -38,10 +38,8 @@ export default class FilmsDetailsCommentList extends Component {
     this._handleDeleteComment = this._handleDeleteComment.bind(this);
   }
 
-  _clearErrorState() {
-    if(this.errorState) {
-      setTimeout(() => this.errorState = false, 1000);
-    }
+  get id() {
+    return this._data.id;
   }
 
   get errorState() {
@@ -66,12 +64,14 @@ export default class FilmsDetailsCommentList extends Component {
     }
   }
 
-  _handleDeleteComment() {
-    this.handleDeleteComment(this._data);
+  _clearErrorState() {
+    if(this.errorState) {
+      setTimeout(() => this.errorState = false, 1000);
+    }
   }
 
-  get id() {
-    return this._data.id;
+  _handleDeleteComment() {
+    this.handleDeleteComment(this._data);
   }
 
   _addEventListeners() {
@@ -84,6 +84,6 @@ export default class FilmsDetailsCommentList extends Component {
 
   getTemplate() {
     this._clearErrorState();
-    return cretateCommentTemplate(this._data, this.isDisabledDeleteButton, this.errorState);
+    return createCommentTemplate(this._data, this.isDisabledDeleteButton, this.errorState);
   }
 }

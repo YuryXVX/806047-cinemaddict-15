@@ -1,23 +1,23 @@
 import { TimePeriod, ProfileRaiting, SortType, FilterType } from '../const';
 
-const RaitingCount = {
+const RatingCount = {
   novice: (filmsCount) => filmsCount >= 1 && filmsCount <= 10,
   fan: (filmsCount) => filmsCount >= 11 && filmsCount <= 20,
   modeBuff: (filmsCount) => filmsCount >= 21,
 };
 
-const arrayToMapGanre = (target) => target.reduce((ganreMap, [ganreName, ganreValue]) => ({ ...ganreMap, [ganreName]: ganreValue }), {});
+const arrayToMapGenre = (target) => target.reduce((genreMap, [ganreName, ganreValue]) => ({ ...genreMap, [ganreName]: ganreValue }), {});
 const sortedMapByMaxCount = (target) => (Object.entries(target).sort(([, valueA], [, valueB]) => valueB - valueA));
 
 export const getFilmsCountByGenre = (films) => {
-  const currentGenreMap = films.reduce((ganreMap, film) => {
+  const currentGenreMap = films.reduce((genreMap, film) => {
     const current = film.info.genre;
 
     current.forEach((ganre) => {
-      ganreMap[ganre] = 0;
+      genreMap[ganre] = 0;
     });
 
-    return ganreMap;
+    return genreMap;
   }, {});
 
   films.forEach((film) => {
@@ -32,16 +32,16 @@ export const getFilmsCountByGenre = (films) => {
     });
   });
 
-  return arrayToMapGanre(sortedMapByMaxCount(currentGenreMap));
+  return arrayToMapGenre(sortedMapByMaxCount(currentGenreMap));
 };
 
-const getTopGanre = (films) => {
+const getTopGenre = (films) => {
   if(!films.length) {
     return;
   }
-  const ganreMap = getFilmsCountByGenre(films);
+  const genreMap = getFilmsCountByGenre(films);
 
-  const ganre = Object.keys(ganreMap)[0];
+  const ganre = Object.keys(genreMap)[0];
 
   return ganre;
 };
@@ -49,9 +49,9 @@ const getTopGanre = (films) => {
 const getAllFilmsDuration = (films) => films.length ? films.reduce((total, film) => total + film.info.runtime, 0) : 0;
 
 export const getFilmInfoForStatisticsView = (films) => ({
-  totalDutation: getAllFilmsDuration(films),
+  totalDuration: getAllFilmsDuration(films),
   watchedFilmsCount: films.length ? films.length : 0,
-  getTopGanre: getTopGanre(films),
+  getTopGenre: getTopGenre(films),
 });
 
 export const filterFilmsByWatchingDate = (films, timePeriod) => {
@@ -114,16 +114,16 @@ export const getFilmsByFilter = (films, filter) => {
   return films.slice().filter(({ filmDetails }) => filmDetails[filter.toLowerCase()]);
 };
 
-export const getUserRaiting = (filmsCount) => {
-  if(RaitingCount.novice(filmsCount)) {
+export const getUserRating = (filmsCount) => {
+  if(RatingCount.novice(filmsCount)) {
     return ProfileRaiting.NOVICE;
   }
 
-  if(RaitingCount.fan(filmsCount)) {
+  if(RatingCount.fan(filmsCount)) {
     return ProfileRaiting.FAN;
   }
 
-  if(RaitingCount.modeBuff(filmsCount)) {
+  if(RatingCount.modeBuff(filmsCount)) {
     return ProfileRaiting.MORE_BUFF;
   }
 
@@ -159,4 +159,14 @@ export const getTopRatedFilms = (films) => films.slice().sort((a, b) => a.info.t
 
 export const getMostCommentedFilms = (films) => films.slice().sort((a, b) => a.comments.length < b.comments.length ? 0 : -1).filter((it) => it.comments.length);
 
+export const convertArrayToMap = (array) => (array.reduce((map, film) => {
+  const { id } = film;
 
+  if (!id) {
+    return map;
+  }
+
+  map[film.id] = film;
+
+  return map;
+}, {}));
