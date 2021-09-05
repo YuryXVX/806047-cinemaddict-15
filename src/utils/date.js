@@ -1,6 +1,5 @@
 import dayjs from 'dayjs';
-// eslint-disable-next-line no-undef
-const relativeTime = require('dayjs/plugin/relativeTime');
+import relativeTime from 'dayjs/plugin/relativeTime';
 
 dayjs.extend(relativeTime);
 
