@@ -16,8 +16,8 @@ import Comment from '../adapters/comment';
 import Film, { toRawFilmModel } from '../adapters/film';
 
 export default class FilmDetailsPresenter extends RootPresenter {
-  constructor(store, api) {
-    super(store, api);
+  constructor(model, api) {
+    super(model, api);
     this._detailsView = null;
     this._detailsControls = null;
     this._detailsNewCommentView = null;

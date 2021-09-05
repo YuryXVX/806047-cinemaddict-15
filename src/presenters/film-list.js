@@ -19,8 +19,8 @@ import Film, { toRawFilmModel } from '../adapters/film';
 import { getMostCommentedFilms, getTopRatedFilms } from '../utils/filters';
 
 export default class FilmListPresenter extends RootPresenter {
-  constructor(store, handleRaitingChange, handleFiltersCountChange, api) {
-    super(store, api);
+  constructor(model, handleRaitingChange, handleFiltersCountChange, api) {
+    super(model, api);
 
     this._container = null;
     this._filterComponentRef = null;

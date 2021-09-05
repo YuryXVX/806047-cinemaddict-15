@@ -1,8 +1,8 @@
 import { toast } from '../utils/toast';
 
 export default class RootPresenter {
-  constructor(store, api) {
-    this._model = store;
+  constructor(model, api) {
+    this._model = model;
     this._api = api;
     this._rerender = this.rerender.bind(this);
     this._filtered = this.filtered.bind(this);
