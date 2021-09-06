@@ -41,9 +41,9 @@ const getTopGenre = (films) => {
   }
   const genreMap = getFilmsCountByGenre(films);
 
-  const ganre = Object.keys(genreMap)[0];
+  const [topGanre] = Object.keys(genreMap);
 
-  return ganre;
+  return topGanre;
 };
 
 const getAllFilmsDuration = (films) => films.length ? films.reduce((total, film) => total + film.info.runtime, 0) : 0;
